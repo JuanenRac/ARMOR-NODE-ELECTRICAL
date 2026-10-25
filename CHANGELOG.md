@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.9] - The panel shows what the chip reads of itself
+
+- **The overview of the panel shows what the ESP32-S3 reads of itself:** the temperature of the chip (from the sensor inside it) and, in the Hardware card, the CPU frequency, the radios of the chip (Wi-Fi and Bluetooth LE), the level of the brown-out detector and whether secure boot and flash encryption are on. The status of the node carries them as `chip_temperature_c` and, inside `hardware`, `cpu_mhz`, `wifi`, `ble`, `brownout_level`, `secure_boot` and `flash_encryption`; the new texts of the panel are in the eight languages.
+
 ## [0.4.8] - The system event task has room to work: its stack grows from 2304 to 4096 bytes
 
 - **The system event task gets 4096 bytes of stack instead of 2304:** every network, Wi-Fi and Bluetooth handler runs in that task, and a running node left only 276 bytes free in it, which the live smoke test of the panel reports as too little. The setting is `CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE` in sdkconfig.defaults, so a build directory made before it must be regenerated (tools/check_sdkconfig.py says whether the generated file carries it).
