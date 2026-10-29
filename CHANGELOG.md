@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.0] - The Overview boxes line up and the inter-processor tasks have more stack
+
+- **The framed values of the Overview page have the same width:** each value fills the column next to its label, so the boxes of a card line up instead of having the width of their text.
+- **The inter-processor call tasks have more stack:** `CONFIG_ESP_IPC_TASK_STACK_SIZE` is 2048 (the default left 532 bytes free in `ipc0` on a running node).
+
 ## [0.4.9] - The panel shows what the chip reads of itself
 
 - **The overview of the panel shows what the ESP32-S3 reads of itself:** the temperature of the chip (from the sensor inside it) and, in the Hardware card, the CPU frequency, the radios of the chip (Wi-Fi and Bluetooth LE), the level of the brown-out detector and whether secure boot and flash encryption are on. The status of the node carries them as `chip_temperature_c` and, inside `hardware`, `cpu_mhz`, `wifi`, `ble`, `brownout_level`, `secure_boot` and `flash_encryption`; the new texts of the panel are in the eight languages.
