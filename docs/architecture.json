@@ -1,0 +1,203 @@
+{
+  "repo": "ARMOR-NODE-ELECTRICAL",
+  "ecosystem": "armor",
+  "tagline": "Measures the installation with PZEM meters and holds the interlock for a transfer between two sources; switching is off by default.",
+  "description": "The firmware of ARMOR-NODE-ELECTRICAL asks up to 16 PZEM meters over one serial line, publishes what they read with its age, and holds the rules for switching contactors: an interlock that never closes two sources together, orders in two steps and a fault that stays until it is acknowledged. Nothing here switches anything today and nothing has run on a board.",
+  "columns": [
+    "WHAT IS CONNECTED",
+    "THIS FIRMWARE",
+    "WHO IT TALKS TO"
+  ],
+  "nodes": [
+    {
+      "id": "meters",
+      "column": 0,
+      "level": "untested",
+      "title": "PZEM meters",
+      "lines": [
+        "PZEM-004T v3 (AC), PZEM-017",
+        "(DC) by Modbus RTU, up to 16;",
+        "stand-ins only so far"
+      ]
+    },
+    {
+      "id": "contactors",
+      "column": 0,
+      "level": "untested",
+      "title": "Contactors, relays",
+      "lines": [
+        "auxiliary contacts and coils;",
+        "a separate stage tested on the",
+        "bench; none is connected"
+      ]
+    },
+    {
+      "id": "bus",
+      "column": 1,
+      "level": "tested",
+      "title": "uart_bus, meter_runner",
+      "lines": [
+        "reads each meter in turn; a mute",
+        "meter stops being published after",
+        "10 s; every channel has its age"
+      ],
+      "code": [
+        "main/uart_bus.cpp",
+        "core/pzem_bus.hpp",
+        "core/meter_runner.hpp"
+      ]
+    },
+    {
+      "id": "json",
+      "column": 1,
+      "level": "contract",
+      "title": "electrical_json, mqtt",
+      "lines": [
+        "one message of channels, as the",
+        "contract accepts it; state and",
+        "result of every command"
+      ],
+      "code": [
+        "core/electrical_json.hpp",
+        "main/mqtt_link.cpp"
+      ]
+    },
+    {
+      "id": "inter",
+      "column": 1,
+      "level": "config",
+      "title": "interlock, switch_set",
+      "lines": [
+        "arm, then close_a / close_b with a",
+        "single-use token; 2000 ms dead",
+        "time; off by default"
+      ],
+      "code": [
+        "core/interlock.hpp",
+        "core/switch_set.hpp"
+      ]
+    },
+    {
+      "id": "relay",
+      "column": 1,
+      "level": "config",
+      "title": "relay_outputs, relay_bank",
+      "lines": [
+        "coils that open on any fault;",
+        "relay pairs interlocked; the",
+        "state is what the contact shows"
+      ],
+      "code": [
+        "main/relay_outputs.cpp",
+        "core/relay_bank.hpp"
+      ]
+    },
+    {
+      "id": "web",
+      "column": 1,
+      "level": "tested",
+      "title": "web_server, panel/",
+      "lines": [
+        "panel in eight languages, logins,",
+        "own HTTPS certificate, private",
+        "networks only by default"
+      ],
+      "code": [
+        "main/web_server.cpp",
+        "core/auth.hpp",
+        "panel/text.js"
+      ]
+    },
+    {
+      "id": "ota",
+      "column": 1,
+      "level": "contract",
+      "title": "github_update, ble",
+      "lines": [
+        "signed updates with rollback;",
+        "Bluetooth set-up with a PIN;",
+        "never run on a board"
+      ],
+      "code": [
+        "main/github_update.cpp",
+        "main/ble_provision.cpp"
+      ]
+    },
+    {
+      "id": "server",
+      "column": 2,
+      "level": "external",
+      "title": "Broker, ARMOR-SERVER",
+      "lines": [
+        "armor/electrical/<id>/state,",
+        "command and result"
+      ]
+    },
+    {
+      "id": "github",
+      "column": 2,
+      "level": "external",
+      "title": "GitHub releases",
+      "lines": [
+        "the signed image of each",
+        "version, one per board"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "meters",
+      "to": "bus",
+      "label": "RS485",
+      "level": "untested"
+    },
+    {
+      "from": "contactors",
+      "to": "relay",
+      "label": "",
+      "level": "untested"
+    },
+    {
+      "from": "bus",
+      "to": "json",
+      "label": "",
+      "level": "tested"
+    },
+    {
+      "from": "json",
+      "to": "relay",
+      "label": "",
+      "level": "config"
+    },
+    {
+      "from": "inter",
+      "to": "relay",
+      "label": "",
+      "level": "config"
+    },
+    {
+      "from": "inter",
+      "to": "web",
+      "label": "",
+      "level": "config"
+    },
+    {
+      "from": "web",
+      "to": "ota",
+      "label": "",
+      "level": "tested"
+    },
+    {
+      "from": "json",
+      "to": "server",
+      "label": "MQTT",
+      "level": "contract"
+    },
+    {
+      "from": "ota",
+      "to": "github",
+      "label": "HTTPS",
+      "level": "contract"
+    }
+  ]
+}

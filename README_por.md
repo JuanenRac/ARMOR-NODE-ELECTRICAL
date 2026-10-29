@@ -18,10 +18,11 @@
 ### Nó elétrico: lê as tensões, correntes, potência e energia da rede AC e DC da casa e guarda as regras para a comutar (núcleo testado em anfitrião e um firmware que compila; nunca correu numa placa)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
+  <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Language">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
+  <img src="https://img.shields.io/badge/Tests-382264%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.0-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
@@ -38,9 +39,15 @@
 |---|---|
 | Versão | `0.5.0` |
 | Maturidade | Funcional |
-| Testes | 380 189 verificações em 16 programas (`ctest`) |
-| Tecnologia | C++17 (host-tested core); ESP-IDF firmware for the ESP32-S3 (Wi-Fi or Ethernet), with its web panel |
+| Função | Nó de campo elétrico: contadores, entradas e manobra (família: Field Nodes, pai: ARMOR-COMMON) |
+| Tecnologia | C++17, ESP-IDF 5.5.5, ESP32-S3 |
+| Testes | 382264 verificações em 19 programas de anfitrião e 5 em Python (`ctest`) |
+| Equipamentos | Contadores PZEM-004T v3 e PZEM-017 (até 16), entradas analógicas, relés; manobra desligada por omissão |
+| Funciona em | Uma placa ESP32-S3 (Ethernet ou Wi-Fi); testes de anfitrião em qualquer computador |
 | Em hardware real | Nenhum ainda: nenhuma placa montada nem contador ou contactor ligados; nada comuta coisa alguma |
+| Licença | GPL-3.0-or-later |
+
+**Ir para:** [Visão geral](#-visão-geral) · [Arquitetura](#-arquitetura) · [Segurança](#-segurança-e-proteção) · [Interfaces](#-interfaces) · [Configuração](#-configuração) · [Início rápido](#-início-rápido) · [Testes](#-testes) · [Problemas](#-resolução-de-problemas) · [Estrutura](#-estrutura-do-repositório) · [Relacionados](#-projetos-relacionados)
 
 ## 🚦 Estado do projeto
 
@@ -51,7 +58,7 @@ Cada linha é uma parte deste repositório e a luz diz até onde chega hoje. É 
 | Área | Estado | O que significa aqui |
 |---|---|---|
 | Software | 🟢 | O firmware compila no contentor ESP-IDF 5.5.5 para as duas placas (Wi-Fi e Ethernet). |
-| Testes | 🟢 | Passam 380.189 verificações em 16 programas de anfitrião (`ctest`), 375.036 delas sobre as regras de manobra; os contadores e contactores são simulações. |
+| Testes | 🟢 | Passam 382.264 verificações em 19 programas de anfitrião (`ctest`), 375.036 delas sobre as regras de manobra; os contadores e contactores são simulações. |
 | Protocolos e dados | 🟡 | As tramas e leituras dos PZEM-004T v3 e PZEM-017 são verificadas contra as tramas documentadas e amostras gravadas; nenhum contador respondeu ainda. |
 | Interface | 🟡 | As páginas de contadores e leituras do painel web foram exercitadas num navegador contra um nó simulado, não numa placa. |
 | Hardware | 🔴 | Nenhuma placa construída nem contador ou contactor ligados: nada funcionou ainda em equipamentos reais. |
@@ -85,6 +92,23 @@ Cada linha é uma parte deste repositório e a luz diz até onde chega hoje. É 
 * **Leitura, apenas de leitura, das definições próprias dos contadores:** após a primeira leitura boa e a cada `bus.check_settings_s` (600 s, 0 = nunca) o nó lê os registos holding do PZEM (004T v3: limiar de potência e endereço; 017: limiares de tensão, endereço e shunt) no mesmo turno das medidas, e avisa se o endereço guardado não é o que usa; não se escreve nada no contador.
 * **Selagem opcional dos segredos guardados:** desativada por predefinição (`security.seal_secrets`, ou `nodes.nvs_encryption` do servidor). Ativada, as palavras-passe, os tokens, as chaves, os PIN e os hashes de palavras-passe que o nó guarda ficam selados com ChaCha20-Poly1305 e tudo o resto continua legível; ativá-la ou desativá-la reescreve-os sem perder nada, mesmo que o nó pare a meio. Não se queima nenhum eFuse nem se cifra a flash: a chave está numa partição do mesmo chip, pelo que **não** protege contra quem tenha a placa, e um nó instalado antes dessa partição mantém os segredos como estavam até ser gravado com a nova tabela de partições.
 
+## 🧩 Papel no A.R.M.O.R.
+
+O ARMOR-NODE-ELECTRICAL mede a rede CA e CC da casa com os seus contadores e guarda as regras para comutar entre fontes. Publica as leituras para o [ARMOR-SERVER](https://github.com/JuanenRac/ARMOR-SERVER), que guarda o histórico e a energia de cada dia e gera os alarmes; o menu *Elétrico* e o *Desenhador elétrico* do [ARMOR-STUDIO](https://github.com/JuanenRac/ARMOR-STUDIO) e o ecrã elétrico do [ARMOR-ANDROID-CONTROL](https://github.com/JuanenRac/ARMOR-ANDROID-CONTROL) mostram-no. A comutação está desenhada (armar, um token de uso único, o intertravamento, a confirmação dos dois contactores) mas não ativada.
+
+| Nome | Como | Para quê |
+|---|---|---|
+| ARMOR-SERVER | MQTT `armor/electrical/<id>/{state,command,result}` | Recebe os canais e ordena uma transferência (só se a manobra estiver ativa em três sítios) |
+| ARMOR-STUDIO | menu Elétrico, Electrical Designer | Mostra os canais e os alarmes e abre o painel do nó |
+| ARMOR-ANDROID-CONTROL | Bluetooth | Configura o nó no terreno e mostra os canais |
+| ARMOR-COMMON | contrato elétrico | As mensagens são verificadas com os seus esquemas; o firmware comum é copiado dele |
+
+## 🏛️ Arquitetura
+
+<p align="center">
+  <img src="images/architecture.svg" alt="Arquitetura de ARMOR-NODE-ELECTRICAL: quem o chama, o que contém e de que depende" width="100%">
+</p>
+
 ## 🖼️ Capturas de ecrã
 
 Capturadas a 1920×1080 numa bancada de testes, com dados de exemplo e sem qualquer instalação real por trás.
@@ -94,41 +118,142 @@ Capturadas a 1920×1080 numa bancada de testes, com dados de exemplo e sem qualq
 <tr><td width="50%" valign="top"><img src="images/screenshots/readings.png" alt="Leituras: o que o nó está a ler neste momento, com a idade de cada valor." width="100%"><br><sub>Leituras: o que o nó está a ler neste momento, com a idade de cada valor.</sub></td><td width="50%" valign="top"><img src="images/screenshots/zigbee.png" alt="Rádio Zigbee: a ponte série para o módulo coordenador, que cliente a pode usar e o estado da ponte." width="100%"><br><sub>Rádio Zigbee: a ponte série para o módulo coordenador, que cliente a pode usar e o estado da ponte.</sub></td></tr>
 </table>
 
-## 🧩 Papel no A.R.M.O.R.
+## 🔒 Segurança e proteção
 
-O ARMOR-NODE-ELECTRICAL mede a rede CA e CC da casa com os seus contadores e guarda as regras para comutar entre fontes. Publica as leituras para o [ARMOR-SERVER](https://github.com/JuanenRac/ARMOR-SERVER), que guarda o histórico e a energia de cada dia e gera os alarmes; o menu *Elétrico* e o *Desenhador elétrico* do [ARMOR-STUDIO](https://github.com/JuanenRac/ARMOR-STUDIO) e o ecrã elétrico do [ARMOR-ANDROID-CONTROL](https://github.com/JuanenRac/ARMOR-ANDROID-CONTROL) mostram-no. A comutação está desenhada (armar, um token de uso único, o intertravamento, a confirmação dos dois contactores) mas não ativada.
+| Ameaça | Defesa |
+|---|---|
+| Palavras-passe em claro ou compiladas | PBKDF2-HMAC-SHA256 com 10 000 rondas; nenhuma palavra-passe no firmware (um nó sem utilizador entra em configuração); no máximo 4 utilizadores (admin ou visualizador) e de 8 a 64 caracteres; no máximo 6 sessões, 30 minutos de inatividade |
+| Tomar um nó acabado de gravar | A configuração exige um código de arranque: o da compilação (`CONFIG_ARMOR_SETUP_CODE`) ou um aleatório guardado na flash e mostrado na consola USB; com segredo de frota é `HMAC-SHA256(segredo, MAC)`; é também a chave do Wi-Fi de configuração (WPA2, nunca em ponte) |
+| O painel alcançado a partir da internet | Responde por omissão às redes privadas de uma casa (10/8, 172.16/12, 192.168/16, 169.254/16, 127/8 e 100.64/10 onde vivem algumas VPN); a definição `web.admin_sources` lista outros endereços e redes IPv4 (8 entradas, 120 caracteres); tudo o que está fora é recusado exceto a identidade pública `GET /api/v1/session`; uma lista que deixaria de fora quem a guarda é rejeitada |
+| O painel em claro por HTTP | HTTPS no 443 com um certificado que o nó cria sozinho (autoassinado, na flash, impressão digital SHA-256 visível para comparar); o painel pode ser http, https ou ambos; o cookie de sessão é sempre HttpOnly e SameSite=Strict (e Secure por TLS) |
+| Um firmware falso do GitHub | Uma imagem só se instala com um SHA-256 coincidente e uma assinatura Ed25519 válida feita com a chave do mantenedor (`no_checksum`, `no_signature`, `bad_signature`, `checksum_mismatch`, `wrong_firmware`, `not_newer`, `version_mismatch` recusam-na); um envio manual por um administrador não é verificado: um limite explícito |
+| Sequestro da configuração Bluetooth | Um PIN de 6 dígitos derivado do código de configuração, visível na consola USB e ao administrador; o telemóvel tem de o introduzir antes de escrever definições; a janela dura `CONFIG_ARMOR_BLE_SETUP_MINUTES` (10 por omissão, de 1 a 120) |
+| Uma ordem remota que faz mal | Dois passos com um token de uso único ligado a essa operação; só o servidor pode escrever esses tópicos no broker; uma pausa dura uma hora no máximo; não há reposição de fábrica, apagamento nem sono profundo por ordem remota |
+| Segredos guardados lidos por quem tem a placa | Opcional (desligado por omissão, interruptor `security.seal_secrets` ou `nodes.nvs_encryption` do servidor): ChaCha20-Poly1305 para palavras-passe, tokens, chaves, PIN e hashes. Não cifra a flash nem queima um eFuse: a chave está numa partição do mesmo chip, por isso não protege contra quem tem a placa |
+| A ligação ao broker em claro | TLS opcional (`mqtts://`) com a autoridade própria do dono (PEM até 2 KB) e verificação do nome; desligado por omissão. O handshake só correu em testes de anfitrião, não numa placa |
+| Rede ou contínua perigosa na placa | O nó só lê os módulos PZEM (módulos fechados, linha série isolada) e nunca leva rede na sua placa; o que comuta é um andar separado testado em bancada com uma lâmpada e um transformador de isolamento |
+| Duas fontes fechadas ao mesmo tempo | O controlador de transferência nunca ordena as duas: exige manobra permitida, nó armado mesmo antes e ambos os contactores confirmados abertos durante todo o tempo morto (`dead_time_ms` 2000 por omissão); um contactor que não mostra o que foi ordenado é uma falha que fica até ser reconhecida (`kDidNotOpen`, `kDidNotClose`); continua a ser obrigatório um bloqueio mecânico entre os contactores |
+| Uma ordem repetida, ou uma manobra que ninguém pediu | `arm` dá um token de uso único de 64 bits que `close_a` ou `close_b` têm de levar, dentro de `arm_window_ms`; as ordens nunca são retidas; no máximo 4 interruptores; a manobra está DESLIGADA a não ser que o firmware a permita (`switching_enabled`), o servidor corra com `ARMOR_ELECTRICAL_SWITCHING=1` e a lista de acesso do broker esteja aberta para esse nó |
+| Uma falha, um retorno perdido ou a manobra desligada | Cada controlador responde com TODAS as bobines abertas (falha => aberto; se aberto é seguro para a carga decide a instalação); o estado na mensagem é o que o contacto auxiliar mostra, não o que foi ordenado; os pares de relés estão bloqueados e o nó nunca abre o par por si mesmo |
+| Uma leitura velha mostrada como real | Um contador mudo deixa de ser publicado após 10 s; cada canal leva a idade da sua leitura e o número de pedidos falhados; uma tarefa de contadores bloqueada reinicia a placa por watchdog; a cada `bus.check_settings_s` (600 s, 0 = nunca) as definições dos contadores são lidas (só leitura) e um endereço alterado é comunicado |
 
-## 📂 Estrutura do repositório
+A rede (230 V CA) e a corrente contínua de um banco de baterias podem matar e provocar incêndios. [docs/SAFETY.md](docs/SAFETY.md) diz o que o desenho pressupõe; não é o desenho de uma instalação e não substitui a regulamentação do país nem um instalador qualificado. Hoje nada disto comuta nada.
 
-```text
-ARMOR-NODE-ELECTRICAL/
-├── main/    the ESP-IDF component: app_main, electrical_manager (the task), uart_bus, network, web_server, api_shared, mqtt_link, node_store, tls_cert, ble_provision, board_ethernet
-├── core/    pzem (frames of the PZEM meters), pzem_bus (the line), meter_runner (one turn of the loop), electrical_json (the message), electrical_config (the settings),
-│            interlock (the rules for switching, NOT linked into the firmware), ble_frame + ble_dispatch (Bluetooth), auth, netplan, board_s3, json...
-├── panel/   the web panel: index.html, app.js, text.js (8 languages), style.css
-├── tools/   build_node.sh, check_sdkconfig.py, pack_panel.py, panel_mock.mjs, panel_browser_test.mjs, the shared CI checks (armor_ci_validate.py, armor_project_tool.py, _armor_readme_parity.py)
-├── secrets/ node.conf.example (the real files are git-ignored)
-├── CMakeLists.txt, partitions.csv, sdkconfig.defaults, sdkconfig.board.*   the ESP-IDF project, the flash layout and the settings of each board (s3-eth, s3-wifi)
-├── tests/   test_meters, test_runner, test_config, test_mqtt_tls, test_ble, test_interlock, emit_samples + check_samples.py (the messages against ARMOR-COMMON)
-├── docs/    DESIGN, NODE_FIRMWARE, BLE_PROVISIONING, SAFETY, SWITCHING, PROTOCOLS, ELECTRICAL_MESSAGES, HARDWARE, BASE_BOARD, ZIGBEE, BENCH_TESTS, SETUP_CODE
-└── images/  brand assets
-```
+## 🔌 Interfaces
 
-## 🛠️ Ambiente de desenvolvimento
+| Parte | O que define |
+|---|---|
+| MQTT | `armor/electrical/<id>/state` (um canal por entrada: CA ou CC, tensão, corrente, potência, energia, frequência, fator de potência, estado do interruptor, alarme; contrato do ARMOR-COMMON), `armor/electrical/<id>/command` e `/result`, `armor/device/<id>/<relé>/{state,set}`, `armor/health/<id>`, `armor/control/<id>/...` |
+| Ordens | `arm`, `close_a`, `close_b` (com o token), `open` e `acknowledge` (limpa uma falha) |
+| Contadores | Peacefair PZEM-004T v3 (CA) e PZEM-017 (CC) por Modbus RTU, até 16 numa linha série; só o pedido de leitura é construído (o que escreve endereço ou limiares não existe); entradas analógicas, contactos e relés na placa base; uma ponte Zigbee ([docs/ZIGBEE.md](docs/ZIGBEE.md)) |
 
-**Requisitos:** um compilador de C++17 para os testes no computador, o contentor ESP-IDF 5.5.5 para compilar a imagem, um ESP32-S3-WROOM-1 N16R8 ou um Waveshare ESP32-S3-ETH
+## ⚙️ Configuração
+
+| Variável | Predefinição | O que define |
+|---|---|---|
+| `bus.check_settings_s` | 600 | Segundos entre as verificações só de leitura das definições dos contadores (0 = nunca) |
+| `dead_time_ms`, `confirm_timeout_ms` | 2000 | O tempo morto de uma transferência e quanto tempo tem um contactor para mostrar o que foi ordenado |
+| `switching_enabled` | off | A manobra está DESLIGADA a não ser que esta definição, o servidor (`ARMOR_ELECTRICAL_SWITCHING=1`) e a lista de acesso do broker a permitam |
+| `CONFIG_ARMOR_NODE_ID`, `_SETUP_CODE`, `_FLEET_SECRET`, `_MQTT_*`, `_HEARTBEAT_S`, `_BLE_SETUP_MINUTES`, `_BOOT_FACTORY_RESET` | - | As definições que todos os nós partilham: o nome (vazio dá `armor-` e os últimos bytes do MAC), o código de configuração (vazio: aleatório), o segredo de frota (16+ caracteres, nunca no repositório), as primeiras definições do broker, o batimento (de 2 a 300 s), os minutos de configuração Bluetooth (de 1 a 120) e a reposição com BOOT (8 s nos primeiros 30 s) |
+
+## 🚀 Início rápido
+
+**Requisitos:** um compilador C++17 para os testes de anfitrião; o contentor ESP-IDF 5.5.5 para compilar a imagem; uma placa ESP32-S3 (Ethernet ou Wi-Fi).
 
 ```bash
-cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir build/host   # 380,189 checks: the meters (69), the loop that asks them (81), the settings (93), the readings and inputs (479), Bluetooth (68), the shared base (2,179), the control orders and diagnostics (1,799), the limits (260), the central link (19), the encrypted link (45), the release and signature checks (61), the interlock (135,736) and the switch sets (239,300)
-build/host/emit_samples | python tests/check_samples.py                                     # the messages, against ARMOR-COMMON
-node tools/panel_mock.mjs --user admin:adminpass123                                         # the panel without a board
-tools/build_node.sh generic                                                                 # the firmware image for the N16R8 board in the ESP-IDF container: dist/generic-s3-wifi.bin
-tools/build_node.sh generic s3-eth                                                          # the same firmware for the Waveshare ESP32-S3-ETH (Ethernet)
+cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir build/host   # host tests, -Werror
+node tools/panel_mock.mjs --user admin:adminpass123   # the panel without a board
+tools/build_node.sh generic s3-wifi                  # the image in the ESP-IDF container (or s3-eth)
 ```
 
 Veja o [guia do firmware](docs/NODE_FIRMWARE.md) e o [canal Bluetooth](docs/BLE_PROVISIONING.md).
 
 Veja o [desenho](docs/DESIGN.md), as [notas de segurança](docs/SAFETY.md), as [regras de comutação](docs/SWITCHING.md), os [protocolos](docs/PROTOCOLS.md) e as [mensagens](docs/ELECTRICAL_MESSAGES.md).
+
+## 🧪 Testes
+
+```bash
+cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir build/host
+python -I tools/armor_ci_validate.py
+```
+
+19 programas de teste de anfitrião e 5 verificações Python correm com `ctest`; 382264 verificações contadas pelos programas de anfitrião, compiladas com `-Werror`.
+
+Verificações Python: os textos do painel em oito línguas, as tarefas, os caminhos de gravação, a sessão Bluetooth sob o seu bloqueio e as rotas que o painel chama (e, em alguns nós, os códigos HTTP ou os glifos dos tipos de letra)
+
+Os testes de anfitrião precisam de qualquer compilador C++17 (Linux, WSL, MSYS2); o painel web também é exercitado num navegador real contra um nó de substituição (`tools/panel_mock.mjs`, `tools/panel_browser_test.mjs`).
+
+A maior parte das verificações são varrimentos exaustivos das regras de manobra (`test_switch_set` e `test_interlock`: 375 036); os contadores e contactores são substitutos. O `test_clock` só imprime `ok`.
+
+## 🏗️ Compilação e publicação
+
+`tools/build_node.sh` compila a imagem no contentor ESP-IDF 5.5.5 e a versão leva a imagem, o seu SHA-256 e a sua assinatura Ed25519, uma por placa; a imagem grava-se por USB-C da primeira vez e depois atualiza-se a partir do painel.
+
+## 🩺 Resolução de problemas
+
+| Vê | Porque | Faça |
+|---|---|---|
+| Perdeu a palavra-passe ou o nó já não se liga à rede | Um nó em configuração e sem endereço após 90 s abre o seu próprio Wi-Fi `ARMOR-SETUP-xxxxxx` (abra `http://192.168.4.1/`) | Para recomeçar mantenha BOOT 8 segundos nos primeiros 30 segundos após ligar (apaga definições e utilizadores), ou use *Reposição de fábrica* no painel |
+| Uma atualização do GitHub é recusada | A versão não traz soma de verificação nem assinatura, não coincidem (`e_no_checksum`, `e_no_signature`, `e_checksum_mismatch`, `e_bad_signature`), não traz imagem para esta placa (`e_no_asset_for_board`) ou é de outro projeto (`e_wrong_firmware`) | O nó não mudou; tente de novo ou deixe um administrador enviar o ficheiro à mão |
+| Um interruptor mostra uma falha | O contactor não mostrou aberto ou fechado como ordenado (`kDidNotOpen`, `kDidNotClose`); fica até ser reconhecido | Verifique a cablagem do contacto auxiliar e envie `acknowledge` |
+| Uma ordem é recusada | A manobra está desligada (`switching_enabled` falso), o token é inválido ou expirou, ou o nó não estava armado mesmo antes | Arme de novo e envie a ordem com o novo token |
+
+## 📂 Estrutura do repositório
+
+<p align="center">
+  <img src="images/repository-structure.svg" alt="Estrutura do repositório de ARMOR-NODE-ELECTRICAL" width="100%">
+</p>
+
+<details>
+<summary>Versão em texto da árvore</summary>
+
+```text
+ARMOR-NODE-ELECTRICAL/
+├── main/                                o firmware: um componente ESP-IDF
+├── core/                                a lógica sem ESP-IDF, testada num computador
+├── panel/                               o painel web embebido no firmware
+├── tests/                               testes de anfitrião e verificações Python
+├── docs/                                12 guias: segurança, manobra, mensagens, hardware
+├── tools/                               ferramentas de compilação, empacotamento e verificação
+├── .github/                             fluxo de CI e modelos de issues e pull requests
+├── images/                              faixa, ícone e as duas imagens deste README
+├── build.sh build.bat                   compilar pelo fluxo de projeto partilhado
+├── test.sh test.bat                     executar os testes pelo fluxo partilhado
+├── run.sh run.bat                       arrancar pelo fluxo de projeto partilhado
+├── armor.project.json                   manifesto: versão, função, maturidade, comando de build
+├── CHANGELOG.md                         o que mudou em cada versão
+├── SECURITY.md SUPPORT.md LICENSE       política de segurança, apoio e licença
+├── CONTRIBUTING.md CODE_OF_CONDUCT.md   como contribuir e o código de conduta
+├── CMakeLists.txt                       o projeto ESP-IDF
+├── partitions.csv                       a tabela da flash
+├── sdkconfig.defaults                   as definições do firmware
+├── sdkconfig.board.s3-eth               as definições de uma placa
+├── sdkconfig.board.s3-wifi              as definições de uma placa
+├── secrets/                             exemplo do ficheiro do nó (os verdadeiros não são versionados)
+├── build-test.sh build-test.bat         executar os testes pelo fluxo partilhado
+└── .gitattributes .gitignore            definições do Git
+```
+
+</details>
+
+## 🗺️ Roteiro e limites conhecidos
+
+**Limites conhecidos hoje**
+
+* As tramas e leituras dos PZEM-004T v3 e PZEM-017 são verificadas contra as tramas documentadas e amostras gravadas; nenhum contador respondeu ainda.
+* As páginas de contadores e leituras do painel web foram exercitadas num navegador contra um nó simulado, não numa placa.
+* Nenhuma placa construída nem contador ou contactor ligados: nada funcionou ainda em equipamentos reais.
+* O código de configuração, o acesso com limite de palavras-passe erradas, o PIN Bluetooth e as atualizações assinadas estão testados no anfitrião; não houve revisão independente.
+* As verificações de hash e de assinatura Ed25519 e a lógica de retrocesso passam no anfitrião; uma atualização pelo ar nunca foi executada numa placa.
+* As regras para manobrar contactores só foram testadas contra contactores simulados; nada aqui manobrou ainda nada real.
+
+**A seguir**
+
+* Experimentar os contadores, os contactores e as regras de manobra numa bancada com lâmpada e transformador de isolamento, e depois uma placa real com a atualização pelo ar.
+
+## 🌍 Idiomas
+
+O README e os textos existem em inglês, espanhol, francês, italiano, alemão, chinês, japonês e português europeu.
 
 ## 🔗 Projetos relacionados
 
@@ -136,33 +261,41 @@ O **A.R.M.O.R.** (Autonomous Radar & Multimodal Observation Range) é um sistema
 
 * **[ARMOR-COMMON](https://github.com/JuanenRac/ARMOR-COMMON)** - Contratos de mensagens, validadores, vetores de conformidade e tipos gerados
 * **[ARMOR-NODE-RADAR](https://github.com/JuanenRac/ARMOR-NODE-RADAR)** - Firmware de nó de campo para ESP32-S3 com três radares e o seu próprio painel web
-* **[ARMOR-NODE-SOLAR](https://github.com/JuanenRac/ARMOR-NODE-SOLAR)** - Protocolos de inversores e baterias solares e as mensagens de um nó de ligação
+* **[ARMOR-NODE-SOLAR](https://github.com/JuanenRac/ARMOR-NODE-SOLAR)** - Protocolos de inversores e baterias solares e as mensagens de um nó porta de ligação
 * **ARMOR-NODE-ELECTRICAL** (este repositório) - Nó elétrico: contadores, a mensagem das leituras da rede e as regras de comutação
-* **[ARMOR-NODE-ALARM](https://github.com/JuanenRac/ARMOR-NODE-ALARM)** - Nó e central de alarme: zonas, armar, atrasos, sirene e PIN, com o servidor ou sem ele
+* **[ARMOR-NODE-ALARM](https://github.com/JuanenRac/ARMOR-NODE-ALARM)** - Nó e painel de alarme: zonas, armar, atrasos, sirene e PIN, com o servidor ou sem ele
 * **[ARMOR-NODE-HMI](https://github.com/JuanenRac/ARMOR-NODE-HMI)** - Painel tátil: o estado do sistema num ecrã de parede, armar e reconhecer, e a casa do assistente de voz
 * **[ARMOR-NETWORK](https://github.com/JuanenRac/ARMOR-NETWORK)** - A rede local: os seus dispositivos, a internet e o que muda
 * **[ARMOR-SERVER](https://github.com/JuanenRac/ARMOR-SERVER)** - Coordenador central: telemetria, alarmes, dispositivos, leituras solares e câmaras
-* **[ARMOR-STUDIO](https://github.com/JuanenRac/ARMOR-STUDIO)** - Consola web: câmaras, radar, alarmes, energia solar e o desenhador de local 2D/3D
-* **[ARMOR-ANDROID-CONTROL](https://github.com/JuanenRac/ARMOR-ANDROID-CONTROL)** - Cliente Android de operador com um radar 2D/3D em direto
+* **[ARMOR-STUDIO](https://github.com/JuanenRac/ARMOR-STUDIO)** - Consola web: câmaras, radar, alarmes, energia solar e o desenhador 2D/3D do local
+* **[ARMOR-ANDROID-CONTROL](https://github.com/JuanenRac/ARMOR-ANDROID-CONTROL)** - Cliente de operador Android com radar 2D/3D em direto
 * **[ARMOR-IOS-CONTROL](https://github.com/JuanenRac/ARMOR-IOS-CONTROL)** - Cliente de operador para iPhone
 * **[ARMOR-SERVER-AI](https://github.com/JuanenRac/ARMOR-SERVER-AI)** - Política de inferência visual que explica as suas decisões e nunca atua
 * **[ARMOR-VISION](https://github.com/JuanenRac/ARMOR-VISION)** - Zonas de câmara, máscaras e regras de deteção para o Jetson Orin NX
-* **[ARMOR-VOICE-AI](https://github.com/JuanenRac/ARMOR-VOICE-AI)** - Intenções de voz offline com uma confirmação que não se pode falsificar
-* **[ARMOR-HARDWARE](https://github.com/JuanenRac/ARMOR-HARDWARE)** - Caixas, eletrónica e a matriz de aceitação de bancada
-* **[ARMOR-DEVOPS](https://github.com/JuanenRac/ARMOR-DEVOPS)** - Implementação, a bancada de testes CM5, cópias de segurança e TLS
+* **[ARMOR-VOICE-AI](https://github.com/JuanenRac/ARMOR-VOICE-AI)** - Intenções de voz offline com uma confirmação que não pode ser falsificada
+* **[ARMOR-HARDWARE](https://github.com/JuanenRac/ARMOR-HARDWARE)** - Caixas, eletrónica e a matriz de aceitação em bancada
+* **[ARMOR-DEVOPS](https://github.com/JuanenRac/ARMOR-DEVOPS)** - Implantação, a bancada de testes do CM5, cópias de segurança e TLS
 * **[ARMOR-SIMULATOR](https://github.com/JuanenRac/ARMOR-SIMULATOR)** - Simulador de telemetria offline com falhas repetíveis
-* **[ARMOR-UPDATER](https://github.com/JuanenRac/ARMOR-UPDATER)** - Deteta, instala e atualiza os próprios repositórios do ecossistema
-* **[ARMOR-DOCS](https://github.com/JuanenRac/ARMOR-DOCS)** - Arquitetura, linha de base de segurança e a matriz de capacidades
+* **[ARMOR-UPDATER](https://github.com/JuanenRac/ARMOR-UPDATER)** - Deteta, instala e atualiza os repositórios do próprio ecossistema
+* **[ARMOR-DOCS](https://github.com/JuanenRac/ARMOR-DOCS)** - Arquitetura, base de segurança e a matriz de capacidades
 
-## 📚 Documentação e comunidade
+## 📚 Documentação
 
-Onde ler mais:
-
-* [Matriz de capacidades: o que está provado e o que não](https://github.com/JuanenRac/ARMOR-DOCS/blob/main/docs/CAPABILITY_MATRIX.md)
+* [Segurança](docs/SAFETY.md) e [manobra](docs/SWITCHING.md): o que o desenho pressupõe e como decorre uma transferência
+* [Mensagens](docs/ELECTRICAL_MESSAGES.md), [protocolos](docs/PROTOCOLS.md) e [Zigbee](docs/ZIGBEE.md)
+* [Desenho](docs/DESIGN.md), [hardware](docs/HARDWARE.md), [placa base](docs/BASE_BOARD.md) e [firmware do nó](docs/NODE_FIRMWARE.md)
+* [Testes de bancada](docs/BENCH_TESTS.md), [código de configuração](docs/SETUP_CODE.md) e [provisionamento Bluetooth](docs/BLE_PROVISIONING.md)
+* [Matriz de capacidades: o que está demonstrado e o que não está](https://github.com/JuanenRac/ARMOR-DOCS/blob/main/docs/CAPABILITY_MATRIX.md)
 * [Catálogo de projetos: versões e como os repositórios dependem uns dos outros](https://github.com/JuanenRac/ARMOR-DOCS/blob/main/docs/PROJECT_CATALOG.md)
 * [Registo de alterações deste repositório](CHANGELOG.md)
-* [Licença (GPL-3.0-or-later)](LICENSE)
-* Perguntas, ideias e relatórios: electrohobby3d@gmail.com
+
+## 🤝 Contribuir e comunidade
+
+* Antes de um pull request, execute `ctest --test-dir build/host` and `python -I tools/armor_ci_validate.py`: tem de passar. Consulte [CONTRIBUTING.md](CONTRIBUTING.md) e o [código de conduta](CODE_OF_CONDUCT.md).
+* O README existe em oito idiomas e é gerado a partir das fontes do ARMOR-DOCS: uma alteração ao texto faz-se lá.
+* Uma alteração a uma mensagem entre componentes começa no ARMOR-COMMON.
+* Não descreva como a funcionar numa placa aquilo que só foi compilado.
+* Comunique uma vulnerabilidade em privado: [SECURITY.md](SECURITY.md). Perguntas, ideias e relatórios: electrohobby3d@gmail.com ([SUPPORT.md](SUPPORT.md)).
 
 ## 👤 AUTOR
 
@@ -170,4 +303,4 @@ Onde ler mais:
 
 ## 📜 LICENÇA
 
-GPL-3.0-or-later - veja [LICENSE](LICENSE).
+GPL-3.0-or-later - consulte [LICENSE](LICENSE).
