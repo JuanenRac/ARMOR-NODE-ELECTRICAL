@@ -23,7 +23,7 @@
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
   <img src="https://img.shields.io/badge/Tests-382264%20checks-2ea44f.svg" alt="Pruebas">
-  <img src="https://img.shields.io/badge/Version-0.5.0-0f6cbd.svg" alt="Versión">
+  <img src="https://img.shields.io/badge/Version-0.5.1-0f6cbd.svg" alt="Versión">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Madurez">
 </p>
 
@@ -37,7 +37,7 @@
 
 | | |
 |---|---|
-| Versión | `0.5.0` |
+| Versión | `0.5.1` |
 | Madurez | Funcional |
 | Función | Nodo de campo eléctrico: medidores, entradas y maniobra (familia: Field Nodes, padre: ARMOR-COMMON) |
 | Tecnología | C++17, ESP-IDF 5.5.5, ESP32-S3 |
