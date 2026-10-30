@@ -13,6 +13,7 @@
   ],
   "deployment_target": "ESP32-S3 nodes inside the electrical panels (the firmware builds; it has never run on a board)",
   "maturity": "functional",
+  "evidence": "host-test",
   "family": "Field Nodes",
   "parent": "ARMOR-COMMON",
   "build": "cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir build/host",
