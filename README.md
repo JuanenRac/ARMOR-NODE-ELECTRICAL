@@ -155,6 +155,7 @@ Mains (230 V AC) and the DC of a battery bank can kill and start fires. [docs/SA
 | `dead_time_ms`, `confirm_timeout_ms` | 2000 | The dead time of a transfer and how long a contactor has to show what was ordered |
 | `switching_enabled` | off | Switching is OFF unless this setting, the server (`ARMOR_ELECTRICAL_SWITCHING=1`) and the broker's access list all allow it |
 | `CONFIG_ARMOR_NODE_ID`, `_SETUP_CODE`, `_FLEET_SECRET`, `_MQTT_*`, `_HEARTBEAT_S`, `_BLE_SETUP_MINUTES`, `_BOOT_FACTORY_RESET` | - | The settings every node shares: the name (empty gives `armor-` and the last bytes of the MAC), the set-up code (empty: random), the fleet secret (16+ characters, never in the repository), the first broker settings, the heartbeat (2 to 300 s), the minutes of Bluetooth set-up (1 to 120) and the reset with BOOT (8 s in the first 30 s) |
+| `system.login_limit_per_minute` | 30 (0-120) | Wrong passwords per minute before the panel locks sign-in for everyone (0 = no global limit); read and change it from Studio (a button on every node) or with `POST /api/v1/admin/nodes/settings`, where the panel login is used once and never kept |
 
 ## 🚀 Quick start
 

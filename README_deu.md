@@ -155,6 +155,7 @@ Netzspannung (230 V AC) und die Gleichspannung einer Batteriebank können töten
 | `dead_time_ms`, `confirm_timeout_ms` | 2000 | Die Totzeit einer Umschaltung und wie lange ein Schütz Zeit hat, das Befohlene zu zeigen |
 | `switching_enabled` | off | Schalten ist AUS, außer diese Einstellung, der Server (`ARMOR_ELECTRICAL_SWITCHING=1`) und die Zugriffsliste des Brokers erlauben es |
 | `CONFIG_ARMOR_NODE_ID`, `_SETUP_CODE`, `_FLEET_SECRET`, `_MQTT_*`, `_HEARTBEAT_S`, `_BLE_SETUP_MINUTES`, `_BOOT_FACTORY_RESET` | - | Die Einstellungen, die alle Knoten teilen: der Name (leer ergibt `armor-` und die letzten Bytes der MAC), der Einrichtungscode (leer: zufällig), das Flottengeheimnis (16+ Zeichen, nie im Repository), die ersten Broker-Einstellungen, der Herzschlag (2 bis 300 s), die Minuten der Bluetooth-Einrichtung (1 bis 120) und der Reset mit BOOT (8 s in den ersten 30 s) |
+| `system.login_limit_per_minute` | 30 (0-120) | Falsche Passwörter pro Minute, bevor das Panel die Anmeldung für alle sperrt (0 = kein globales Limit); in Studio (eine Schaltfläche an jedem Knoten) oder mit `POST /api/v1/admin/nodes/settings` lesen und ändern, wobei die Panel-Anmeldung einmal benutzt und nie gespeichert wird |
 
 ## 🚀 Schnellstart
 

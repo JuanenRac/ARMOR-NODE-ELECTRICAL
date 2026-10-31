@@ -155,6 +155,7 @@ ARMOR-NODE-ELECTRICAL はメーターで家の AC・DC ネットワークを測�
 | `dead_time_ms`, `confirm_timeout_ms` | 2000 | 切替のデッドタイムと、接触器が命令どおりの状態を示すまでの猶予 |
 | `switching_enabled` | off | この設定、サーバー（`ARMOR_ELECTRICAL_SWITCHING=1`）、ブローカーのアクセスリストのすべてが許可しない限り開閉はオフ |
 | `CONFIG_ARMOR_NODE_ID`, `_SETUP_CODE`, `_FLEET_SECRET`, `_MQTT_*`, `_HEARTBEAT_S`, `_BLE_SETUP_MINUTES`, `_BOOT_FACTORY_RESET` | - | すべてのノードに共通する設定：名前（空なら `armor-` と MAC の下位バイト）、セットアップコード（空ならランダム）、フリートシークレット（16 文字以上、リポジトリには置かない）、最初のブローカー設定、ハートビート（2〜300 秒）、Bluetooth セットアップの分数（1〜120）、BOOT によるリセット（最初の 30 秒に 8 秒） |
+| `system.login_limit_per_minute` | 30 (0-120) | パネルが全員のログインをロックするまでの 1 分あたりの誤パスワード数（0 = 全体の上限なし）。Studio（各ノードのボタン）または `POST /api/v1/admin/nodes/settings` で読み取り・変更でき、パネルのログイン情報は 1 回だけ使われ保存されません |
 
 ## 🚀 クイックスタート
 

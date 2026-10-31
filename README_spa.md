@@ -155,6 +155,7 @@ La red (230 V CA) y la corriente continua de un banco de baterías pueden matar 
 | `dead_time_ms`, `confirm_timeout_ms` | 2000 | El tiempo muerto de una transferencia y cuánto tiene un contactor para mostrar lo ordenado |
 | `switching_enabled` | off | La maniobra está APAGADA salvo que este ajuste, el servidor (`ARMOR_ELECTRICAL_SWITCHING=1`) y la lista de acceso del broker la permitan |
 | `CONFIG_ARMOR_NODE_ID`, `_SETUP_CODE`, `_FLEET_SECRET`, `_MQTT_*`, `_HEARTBEAT_S`, `_BLE_SETUP_MINUTES`, `_BOOT_FACTORY_RESET` | - | Los ajustes que comparten todos los nodos: el nombre (vacío da `armor-` y los últimos bytes de la MAC), el código de puesta en marcha (vacío: aleatorio), el secreto de flota (16+ caracteres, nunca en el repositorio), los primeros ajustes del broker, el latido (de 2 a 300 s), los minutos de puesta en marcha por Bluetooth (de 1 a 120) y el reinicio con BOOT (8 s en los primeros 30 s) |
+| `system.login_limit_per_minute` | 30 (0-120) | Contraseñas erróneas por minuto antes de que el panel bloquee el acceso a todos (0 = sin límite global); se lee y se cambia desde Studio (un botón en cada nodo) o con `POST /api/v1/admin/nodes/settings`, donde el acceso al panel se usa una vez y nunca se guarda |
 
 ## 🚀 Inicio rápido
 
