@@ -29,7 +29,7 @@
 
 ---
 
-**Verificação de honestidade - o que funciona hoje:** O núcleo (as tramas dos contadores PZEM-004T v3 e PZEM-017, o barramento que os interroga, a mensagem do nó, as entradas analógicas e as regras de comutação: 376 195 verificações em 11 programas de teste, 375 008 delas sobre as regras de comutação) é testado num computador com contadores e contactores de substituição, e as mensagens que produz são aceites pelo ARMOR-COMMON. O firmware do nó (as definições, a linha série, as páginas Contadores e Leituras do seu painel, Bluetooth, atualizações assinadas) compila no contentor ESP-IDF 5.5.5 para as duas placas. **Nunca correu numa placa, nada foi ligado a um contador nem a um contactor, e nada aqui comuta coisa alguma.**
+**Verificação de honestidade - o que funciona hoje:** O núcleo (as tramas dos contadores PZEM-004T v3 e PZEM-017, o barramento que os interroga, a mensagem do nó, as entradas analógicas e as regras de comutação: 382 264 verificações em 19 programas de teste, 375 036 delas sobre as regras de comutação) é testado num computador com contadores e contactores de substituição, e as mensagens que produz são aceites pelo ARMOR-COMMON. O firmware do nó (as definições, a linha série, as páginas Contadores e Leituras do seu painel, Bluetooth, atualizações assinadas) compila no contentor ESP-IDF 5.5.5 para as duas placas. **Nunca correu numa placa, nada foi ligado a um contador nem a um contactor, e nada aqui comuta coisa alguma.**
 
 ---
 
