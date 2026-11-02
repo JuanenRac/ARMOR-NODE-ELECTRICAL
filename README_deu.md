@@ -111,12 +111,31 @@ ARMOR-NODE-ELECTRICAL misst das AC- und DC-Netz des Hauses mit seinen Zählern u
 
 ## 🖼️ Screenshots
 
-Aufgenommen mit 1920×1080 auf einem Prüfstand, mit Beispieldaten und ohne eine echte Anlage dahinter.
+Aufgenommen auf einem Prüfstand mit erfundenen Beispieldaten und ohne eine echte Anlage dahinter.
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/overview.png" alt="Übersicht: der Zustand des Knotens auf einen Blick - Netzwerk, Broker, Firmware und was er meldet." width="100%"><br><sub>Übersicht: der Zustand des Knotens auf einen Blick - Netzwerk, Broker, Firmware und was er meldet.</sub></td><td width="50%" valign="top"><img src="images/screenshots/meters.png" alt="Zähler: die Energiezähler und Analogkanäle, die der Knoten liest, jeweils mit Name und Skala." width="100%"><br><sub>Zähler: die Energiezähler und Analogkanäle, die der Knoten liest, jeweils mit Name und Skala.</sub></td></tr>
-<tr><td width="50%" valign="top"><img src="images/screenshots/readings.png" alt="Messwerte: was der Knoten gerade liest, mit dem Alter jedes Wertes." width="100%"><br><sub>Messwerte: was der Knoten gerade liest, mit dem Alter jedes Wertes.</sub></td><td width="50%" valign="top"><img src="images/screenshots/zigbee.png" alt="Zigbee-Funk: die serielle Brücke zum Koordinatormodul, welcher Client sie nutzen darf, und der Zustand der Brücke." width="100%"><br><sub>Zigbee-Funk: die serielle Brücke zum Koordinatormodul, welcher Client sie nutzen darf, und der Zustand der Brücke.</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/overview.png" alt="Übersicht" width="100%">
+</p>
+
+<p align="center"><em>Übersicht: der Zustand des Knotens auf einen Blick - Netzwerk, Broker, Firmware und was er meldet.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/meters.png" alt="Zähler" width="100%">
+</p>
+
+<p align="center"><em>Zähler: die Energiezähler und Analogkanäle, die der Knoten liest, jeweils mit Name und Skala.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/readings.png" alt="Messwerte" width="100%">
+</p>
+
+<p align="center"><em>Messwerte: was der Knoten gerade liest, mit dem Alter jedes Wertes.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/zigbee.png" alt="Zigbee-Funk" width="100%">
+</p>
+
+<p align="center"><em>Zigbee-Funk: die serielle Brücke zum Koordinatormodul, welcher Client sie nutzen darf, und der Zustand der Brücke.</em></p>
 
 ## 🔒 Sicherheit und Schutz
 

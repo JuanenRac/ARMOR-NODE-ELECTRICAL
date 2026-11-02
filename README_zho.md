@@ -111,12 +111,31 @@ ARMOR-NODE-ELECTRICAL 通过电表测量住宅的交流和直流网络，并保�
 
 ## 🖼️ 屏幕截图
 
-在测试台上以 1920×1080 截取，使用示例数据，背后没有真实的安装。
+在测试台上使用虚构的示例数据截取，背后没有真实的安装。
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/overview.png" alt="概览：节点状态一目了然——网络、代理、固件及其上报内容。" width="100%"><br><sub>概览：节点状态一目了然——网络、代理、固件及其上报内容。</sub></td><td width="50%" valign="top"><img src="images/screenshots/meters.png" alt="电表：节点读取的电能表和模拟通道，各有名称和量程。" width="100%"><br><sub>电表：节点读取的电能表和模拟通道，各有名称和量程。</sub></td></tr>
-<tr><td width="50%" valign="top"><img src="images/screenshots/readings.png" alt="读数：节点此刻读取到的内容，以及每个数值的时效。" width="100%"><br><sub>读数：节点此刻读取到的内容，以及每个数值的时效。</sub></td><td width="50%" valign="top"><img src="images/screenshots/zigbee.png" alt="Zigbee 无线电：通往协调器模块的串口桥接、允许使用它的客户端以及桥接状态。" width="100%"><br><sub>Zigbee 无线电：通往协调器模块的串口桥接、允许使用它的客户端以及桥接状态。</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/overview.png" alt="概览" width="100%">
+</p>
+
+<p align="center"><em>概览：节点状态一目了然——网络、代理、固件及其上报内容。</em></p>
+
+<p align="center">
+  <img src="images/screenshots/meters.png" alt="电表" width="100%">
+</p>
+
+<p align="center"><em>电表：节点读取的电能表和模拟通道，各有名称和量程。</em></p>
+
+<p align="center">
+  <img src="images/screenshots/readings.png" alt="读数" width="100%">
+</p>
+
+<p align="center"><em>读数：节点此刻读取到的内容，以及每个数值的时效。</em></p>
+
+<p align="center">
+  <img src="images/screenshots/zigbee.png" alt="Zigbee 无线电" width="100%">
+</p>
+
+<p align="center"><em>Zigbee 无线电：通往协调器模块的串口桥接、允许使用它的客户端以及桥接状态。</em></p>
 
 ## 🔒 安全与防护
 

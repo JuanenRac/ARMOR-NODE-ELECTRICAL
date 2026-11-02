@@ -111,12 +111,31 @@ O ARMOR-NODE-ELECTRICAL mede a rede CA e CC da casa com os seus contadores e gua
 
 ## 🖼️ Capturas de ecrã
 
-Capturadas a 1920×1080 numa bancada de testes, com dados de exemplo e sem qualquer instalação real por trás.
+Capturadas numa bancada de testes com dados de exemplo inventados e sem qualquer instalação real por trás.
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/overview.png" alt="Resumo: o estado do nó num relance - rede, broker, firmware e o que reporta." width="100%"><br><sub>Resumo: o estado do nó num relance - rede, broker, firmware e o que reporta.</sub></td><td width="50%" valign="top"><img src="images/screenshots/meters.png" alt="Contadores: os contadores de energia e canais analógicos que o nó lê, cada um com o seu nome e escala." width="100%"><br><sub>Contadores: os contadores de energia e canais analógicos que o nó lê, cada um com o seu nome e escala.</sub></td></tr>
-<tr><td width="50%" valign="top"><img src="images/screenshots/readings.png" alt="Leituras: o que o nó está a ler neste momento, com a idade de cada valor." width="100%"><br><sub>Leituras: o que o nó está a ler neste momento, com a idade de cada valor.</sub></td><td width="50%" valign="top"><img src="images/screenshots/zigbee.png" alt="Rádio Zigbee: a ponte série para o módulo coordenador, que cliente a pode usar e o estado da ponte." width="100%"><br><sub>Rádio Zigbee: a ponte série para o módulo coordenador, que cliente a pode usar e o estado da ponte.</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/overview.png" alt="Resumo" width="100%">
+</p>
+
+<p align="center"><em>Resumo: o estado do nó num relance - rede, broker, firmware e o que reporta.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/meters.png" alt="Contadores" width="100%">
+</p>
+
+<p align="center"><em>Contadores: os contadores de energia e canais analógicos que o nó lê, cada um com o seu nome e escala.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/readings.png" alt="Leituras" width="100%">
+</p>
+
+<p align="center"><em>Leituras: o que o nó está a ler neste momento, com a idade de cada valor.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/zigbee.png" alt="Rádio Zigbee" width="100%">
+</p>
+
+<p align="center"><em>Rádio Zigbee: a ponte série para o módulo coordenador, que cliente a pode usar e o estado da ponte.</em></p>
 
 ## 🔒 Segurança e proteção
 

@@ -111,12 +111,31 @@ ARMOR-NODE-ELECTRICAL misura la rete CA e CC della casa con i suoi contatori e c
 
 ## 🖼️ Schermate
 
-Catturate a 1920×1080 su un banco di prova, con dati di esempio e senza alcuna installazione reale dietro.
+Catturate su un banco di prova con dati di esempio inventati e senza alcuna installazione reale dietro.
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/overview.png" alt="Riepilogo: lo stato del nodo in breve - rete, broker, firmware e ciò che riporta." width="100%"><br><sub>Riepilogo: lo stato del nodo in breve - rete, broker, firmware e ciò che riporta.</sub></td><td width="50%" valign="top"><img src="images/screenshots/meters.png" alt="Contatori: i contatori di energia e i canali analogici letti dal nodo, ognuno con nome e scala." width="100%"><br><sub>Contatori: i contatori di energia e i canali analogici letti dal nodo, ognuno con nome e scala.</sub></td></tr>
-<tr><td width="50%" valign="top"><img src="images/screenshots/readings.png" alt="Letture: ciò che il nodo legge in questo momento, con l'età di ogni valore." width="100%"><br><sub>Letture: ciò che il nodo legge in questo momento, con l'età di ogni valore.</sub></td><td width="50%" valign="top"><img src="images/screenshots/zigbee.png" alt="Radio Zigbee: il ponte seriale verso il modulo coordinatore, quale client può usarlo e lo stato del ponte." width="100%"><br><sub>Radio Zigbee: il ponte seriale verso il modulo coordinatore, quale client può usarlo e lo stato del ponte.</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/overview.png" alt="Riepilogo" width="100%">
+</p>
+
+<p align="center"><em>Riepilogo: lo stato del nodo in breve - rete, broker, firmware e ciò che riporta.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/meters.png" alt="Contatori" width="100%">
+</p>
+
+<p align="center"><em>Contatori: i contatori di energia e i canali analogici letti dal nodo, ognuno con nome e scala.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/readings.png" alt="Letture" width="100%">
+</p>
+
+<p align="center"><em>Letture: ciò che il nodo legge in questo momento, con l'età di ogni valore.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/zigbee.png" alt="Radio Zigbee" width="100%">
+</p>
+
+<p align="center"><em>Radio Zigbee: il ponte seriale verso il modulo coordinatore, quale client può usarlo e lo stato del ponte.</em></p>
 
 ## 🔒 Sicurezza e protezione
 

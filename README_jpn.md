@@ -111,12 +111,31 @@ ARMOR-NODE-ELECTRICAL はメーターで家の AC・DC ネットワークを測�
 
 ## 🖼️ スクリーンショット
 
-テストベンチで 1920×1080 で撮影。サンプルデータを使用しており、実際の設備は接続されていません。
+テストベンチで架空のサンプルデータを使って撮影したもので、実際の設備は接続されていません。
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/overview.png" alt="概要：ネットワーク、ブローカー、ファームウェア、報告内容など、ノードの状態をひと目で確認できます。" width="100%"><br><sub>概要：ネットワーク、ブローカー、ファームウェア、報告内容など、ノードの状態をひと目で確認できます。</sub></td><td width="50%" valign="top"><img src="images/screenshots/meters.png" alt="メーター：ノードが読み取る電力量計とアナログチャネル。名前とスケールを設定できます。" width="100%"><br><sub>メーター：ノードが読み取る電力量計とアナログチャネル。名前とスケールを設定できます。</sub></td></tr>
-<tr><td width="50%" valign="top"><img src="images/screenshots/readings.png" alt="測定値：ノードがいま読み取っている値と、各値の経過時間。" width="100%"><br><sub>測定値：ノードがいま読み取っている値と、各値の経過時間。</sub></td><td width="50%" valign="top"><img src="images/screenshots/zigbee.png" alt="Zigbee 無線：コーディネーターモジュールへのシリアルブリッジ、使用を許可するクライアント、ブリッジの状態。" width="100%"><br><sub>Zigbee 無線：コーディネーターモジュールへのシリアルブリッジ、使用を許可するクライアント、ブリッジの状態。</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/overview.png" alt="概要" width="100%">
+</p>
+
+<p align="center"><em>概要：ネットワーク、ブローカー、ファームウェア、報告内容など、ノードの状態をひと目で確認できます。</em></p>
+
+<p align="center">
+  <img src="images/screenshots/meters.png" alt="メーター" width="100%">
+</p>
+
+<p align="center"><em>メーター：ノードが読み取る電力量計とアナログチャネル。名前とスケールを設定できます。</em></p>
+
+<p align="center">
+  <img src="images/screenshots/readings.png" alt="測定値" width="100%">
+</p>
+
+<p align="center"><em>測定値：ノードがいま読み取っている値と、各値の経過時間。</em></p>
+
+<p align="center">
+  <img src="images/screenshots/zigbee.png" alt="Zigbee 無線" width="100%">
+</p>
+
+<p align="center"><em>Zigbee 無線：コーディネーターモジュールへのシリアルブリッジ、使用を許可するクライアント、ブリッジの状態。</em></p>
 
 ## 🔒 セキュリティと安全
 

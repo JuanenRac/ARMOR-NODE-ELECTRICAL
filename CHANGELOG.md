@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The README shows screenshots of the web panel of the node:** four pictures with a sentence under each, in the eight languages, taken headless against a stand-in node with made-up sample data by `tools/capture_screenshots.py` and listed in `docs/screenshots.json`; the pictures weigh at most 400 KB each.
+
 ## [0.5.4] - A firmware for the other board is refused when it is uploaded, the analog inputs can be read as a stream with a calibration each and the Zigbee bridge is watched by the task watchdog
 
 - **A firmware for the other board is refused when it is uploaded:** both boards (Wi-Fi and Ethernet) run the same project, so the name inside an image could not tell them apart, and a Wi-Fi image on the Ethernet board left the node off the cable for good. Every image now carries a small mark with the board it was built for (`core/image_board.hpp`); the upload reads it while the image arrives and, before anything is installed, refuses an image that names the other board (422 `wrong_board`) and, unless the setting says otherwise, an image with no mark (422 `no_board_mark`); switching to the other slot refuses an image of the other board too. Two settings, both on by default and in the panel in eight languages: `security.ota_check_board` and `security.ota_require_board_mark` (turn the second off to go back to a version from before the marks). Tested on a computer with images cut at every possible place; nothing of it has been compiled into an image or run on a board.

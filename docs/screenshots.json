@@ -1,0 +1,96 @@
+{
+  "screens": [
+    {
+      "file": "overview.png",
+      "alt": {
+        "en": "Overview",
+        "es": "Resumen",
+        "fr": "Résumé",
+        "it": "Riepilogo",
+        "de": "Übersicht",
+        "zh": "概览",
+        "ja": "概要",
+        "pt": "Resumo"
+      },
+      "caption": {
+        "en": "Overview: the state of the node at a glance - network, broker, firmware and what it reports.",
+        "es": "Resumen: el estado del nodo de un vistazo - red, broker, firmware y lo que reporta.",
+        "fr": "Résumé : l'état du nœud en un coup d'œil - réseau, broker, firmware et ce qu'il remonte.",
+        "it": "Riepilogo: lo stato del nodo in breve - rete, broker, firmware e ciò che riporta.",
+        "de": "Übersicht: der Zustand des Knotens auf einen Blick - Netzwerk, Broker, Firmware und was er meldet.",
+        "zh": "概览：节点状态一目了然——网络、代理、固件及其上报内容。",
+        "ja": "概要：ネットワーク、ブローカー、ファームウェア、報告内容など、ノードの状態をひと目で確認できます。",
+        "pt": "Resumo: o estado do nó num relance - rede, broker, firmware e o que reporta."
+      }
+    },
+    {
+      "file": "meters.png",
+      "alt": {
+        "en": "Meters",
+        "es": "Contadores",
+        "fr": "Compteurs",
+        "it": "Contatori",
+        "de": "Zähler",
+        "zh": "电表",
+        "ja": "メーター",
+        "pt": "Contadores"
+      },
+      "caption": {
+        "en": "Meters: the energy meters and analog channels the node reads, each with its name and scale.",
+        "es": "Contadores: los contadores de energía y canales analógicos que lee el nodo, cada uno con su nombre y escala.",
+        "fr": "Compteurs : les compteurs d'énergie et les voies analogiques lus par le nœud, chacun avec son nom et son échelle.",
+        "it": "Contatori: i contatori di energia e i canali analogici letti dal nodo, ognuno con nome e scala.",
+        "de": "Zähler: die Energiezähler und Analogkanäle, die der Knoten liest, jeweils mit Name und Skala.",
+        "zh": "电表：节点读取的电能表和模拟通道，各有名称和量程。",
+        "ja": "メーター：ノードが読み取る電力量計とアナログチャネル。名前とスケールを設定できます。",
+        "pt": "Contadores: os contadores de energia e canais analógicos que o nó lê, cada um com o seu nome e escala."
+      }
+    },
+    {
+      "file": "readings.png",
+      "alt": {
+        "en": "Readings",
+        "es": "Lecturas",
+        "fr": "Mesures",
+        "it": "Letture",
+        "de": "Messwerte",
+        "zh": "读数",
+        "ja": "測定値",
+        "pt": "Leituras"
+      },
+      "caption": {
+        "en": "Readings: what the node is reading right now, with the age of each value.",
+        "es": "Lecturas: lo que el nodo lee ahora mismo, con la antigüedad de cada valor.",
+        "fr": "Mesures : ce que le nœud lit en ce moment, avec l'âge de chaque valeur.",
+        "it": "Letture: ciò che il nodo legge in questo momento, con l'età di ogni valore.",
+        "de": "Messwerte: was der Knoten gerade liest, mit dem Alter jedes Wertes.",
+        "zh": "读数：节点此刻读取到的内容，以及每个数值的时效。",
+        "ja": "測定値：ノードがいま読み取っている値と、各値の経過時間。",
+        "pt": "Leituras: o que o nó está a ler neste momento, com a idade de cada valor."
+      }
+    },
+    {
+      "file": "zigbee.png",
+      "alt": {
+        "en": "Zigbee radio",
+        "es": "Radio Zigbee",
+        "fr": "Radio Zigbee",
+        "it": "Radio Zigbee",
+        "de": "Zigbee-Funk",
+        "zh": "Zigbee 无线电",
+        "ja": "Zigbee 無線",
+        "pt": "Rádio Zigbee"
+      },
+      "caption": {
+        "en": "Zigbee radio: the serial bridge to the coordinator module, which client may use it, and the state of the bridge.",
+        "es": "Radio Zigbee: el puente serie hacia el módulo coordinador, qué cliente puede usarlo y el estado del puente.",
+        "fr": "Radio Zigbee : le pont série vers le module coordinateur, quel client peut l'utiliser et l'état du pont.",
+        "it": "Radio Zigbee: il ponte seriale verso il modulo coordinatore, quale client può usarlo e lo stato del ponte.",
+        "de": "Zigbee-Funk: die serielle Brücke zum Koordinatormodul, welcher Client sie nutzen darf, und der Zustand der Brücke.",
+        "zh": "Zigbee 无线电：通往协调器模块的串口桥接、允许使用它的客户端以及桥接状态。",
+        "ja": "Zigbee 無線：コーディネーターモジュールへのシリアルブリッジ、使用を許可するクライアント、ブリッジの状態。",
+        "pt": "Rádio Zigbee: a ponte série para o módulo coordenador, que cliente a pode usar e o estado da ponte."
+      }
+    }
+  ]
+}

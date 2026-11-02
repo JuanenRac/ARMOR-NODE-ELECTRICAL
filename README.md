@@ -111,12 +111,31 @@ ARMOR-NODE-ELECTRICAL measures the house's AC and DC network through its meters 
 
 ## 🖼️ Screenshots
 
-Captured at 1920×1080 on a test bench, with sample data and no real installation behind them.
+Captured on a test bench with made-up sample data and no real installation behind them.
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/overview.png" alt="Overview: the state of the node at a glance - network, broker, firmware and what it reports." width="100%"><br><sub>Overview: the state of the node at a glance - network, broker, firmware and what it reports.</sub></td><td width="50%" valign="top"><img src="images/screenshots/meters.png" alt="Meters: the energy meters and analog channels the node reads, each with its name and scale." width="100%"><br><sub>Meters: the energy meters and analog channels the node reads, each with its name and scale.</sub></td></tr>
-<tr><td width="50%" valign="top"><img src="images/screenshots/readings.png" alt="Readings: what the node is reading right now, with the age of each value." width="100%"><br><sub>Readings: what the node is reading right now, with the age of each value.</sub></td><td width="50%" valign="top"><img src="images/screenshots/zigbee.png" alt="Zigbee radio: the serial bridge to the coordinator module, which client may use it, and the state of the bridge." width="100%"><br><sub>Zigbee radio: the serial bridge to the coordinator module, which client may use it, and the state of the bridge.</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/overview.png" alt="Overview" width="100%">
+</p>
+
+<p align="center"><em>Overview: the state of the node at a glance - network, broker, firmware and what it reports.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/meters.png" alt="Meters" width="100%">
+</p>
+
+<p align="center"><em>Meters: the energy meters and analog channels the node reads, each with its name and scale.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/readings.png" alt="Readings" width="100%">
+</p>
+
+<p align="center"><em>Readings: what the node is reading right now, with the age of each value.</em></p>
+
+<p align="center">
+  <img src="images/screenshots/zigbee.png" alt="Zigbee radio" width="100%">
+</p>
+
+<p align="center"><em>Zigbee radio: the serial bridge to the coordinator module, which client may use it, and the state of the bridge.</em></p>
 
 ## 🔒 Security & Safety
 
