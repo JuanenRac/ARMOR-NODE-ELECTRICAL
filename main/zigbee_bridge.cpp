@@ -20,6 +20,7 @@ extern "C" {
 #include "driver/gpio.h"
 #include "driver/uart.h"
 #include "esp_log.h"
+#include "esp_task_wdt.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -119,7 +120,9 @@ void bridge_task(void*) {
   ESP_LOGI(kTag, "the Zigbee radio is on UART2 at %d baud, offered on TCP port %d to %s%s%s only", g_setting.baud, g_setting.port, g_setting.allowed_client.c_str(), g_setting.fallback_client.empty() ? "" : " and, as a fallback, ", g_setting.fallback_client.c_str());
   int client = -1;
   std::uint8_t buffer[512];
+  esp_task_wdt_add(nullptr);   // the loop below turns at least every few milliseconds (the select has a 5 ms limit, a send 1 s): a bridge that hangs would leave the radio unreachable unseen, so the watchdog restarts the node
   for (;;) {
+    esp_task_wdt_reset();
     fd_set readable;
     FD_ZERO(&readable);
     FD_SET(listener, &readable);

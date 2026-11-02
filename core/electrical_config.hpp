@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 
+#include "adc_stream.hpp"
 #include "base_board.hpp"
 #include "board_s3.hpp"
 #include "config_common.hpp"
@@ -72,6 +73,9 @@ struct AnalogSetting {
   double offset_v = 0.0;
   double zero_below = 0.0;
   double nominal_voltage_v = 0.0;
+  // The calibration of this input, measured against a reference (core/adc_stream.hpp): corrected = (reading in mV - cal_offset_mv) * cal_gain. 1 and 0 leave the reading as the chip gave it.
+  double cal_gain = 1.0;
+  double cal_offset_mv = 0.0;
 };
 
 struct Settings : NodeSettings, IoSettings {   // what every node has (core/node_settings.hpp) and the base board's own (core/io_config.hpp), plus the line of the meters and the analog inputs
@@ -79,6 +83,7 @@ struct Settings : NodeSettings, IoSettings {   // what every node has (core/node
   BusSetting bus2;   // the second line; unused while no meter says line 2
   std::array<MeterSetting, kMeterCount> meters;
   std::array<AnalogSetting, board::kAnalogCount> analogs;
+  adcstream::StreamSettings analog_stream;   // how the inputs are read: one sample at a time (the default), or as a stream filled by the converter itself
 };
 
 // The speeds the line may use.
@@ -156,7 +161,18 @@ inline void read_settings(const json::Value& document, Settings& s, Problems& pr
       read_double(item, "offset_v", input.offset_v, -5.0, 5.0, base + "offset_v", problems);
       read_double(item, "zero_below", input.zero_below, 0.0, 100000.0, base + "zero_below", problems);
       read_double(item, "nominal_voltage_v", input.nominal_voltage_v, 0.0, 1000.0, base + "nominal_voltage_v", problems);
+      read_double(item, "cal_gain", input.cal_gain, adcstream::kMinGain, adcstream::kMaxGain, base + "cal_gain", problems);
+      read_double(item, "cal_offset_mv", input.cal_offset_mv, -adcstream::kMaxOffsetMv, adcstream::kMaxOffsetMv, base + "cal_offset_mv", problems);
     }
+  }
+  if (const json::Value* stream = document.get("analog_stream"); stream != nullptr && stream->is_object()) {
+    read_bool(*stream, "continuous", s.analog_stream.continuous, "analog_stream.continuous", problems);
+    read_int(*stream, "sample_rate_hz", s.analog_stream.sample_rate_hz, adcstream::kMinSampleRate, adcstream::kMaxSampleRate, "analog_stream.sample_rate_hz", problems);
+    read_int(*stream, "window_ms", s.analog_stream.window_ms, adcstream::kMinWindowMs, adcstream::kMaxWindowMs, "analog_stream.window_ms", problems);
+    read_int(*stream, "min_cycles", s.analog_stream.min_cycles, 2, 50, "analog_stream.min_cycles", problems);
+    read_int(*stream, "hysteresis_mv", s.analog_stream.hysteresis_mv, 1, 500, "analog_stream.hysteresis_mv", problems);
+    read_int(*stream, "min_hz", s.analog_stream.min_hz, 20, 100, "analog_stream.min_hz", problems);
+    read_int(*stream, "max_hz", s.analog_stream.max_hz, 20, 100, "analog_stream.max_hz", problems);
   }
 }
 
@@ -234,7 +250,10 @@ inline Problems validate(const Settings& s) {
     if (input.nominal_voltage_v != 0.0 && input.quantity != "current") bad(problems, base + "nominal_voltage_v", "invalid");
     std::size_t label_characters = 0;
     if (!input.label.empty() && (!net::valid_utf8(input.label, &label_characters) || label_characters > 40)) bad(problems, base + "label", "invalid");
+    if (!adcstream::valid(adcstream::Calibration{input.cal_gain, input.cal_offset_mv})) bad(problems, base + "cal_gain", "range");
+    if (input.mode == "ac" && input.cal_offset_mv != 0.0) bad(problems, base + "cal_offset_mv", "invalid");   // an alternating signal has no offset to correct
   }
+  if (const char* member = adcstream::check(s.analog_stream); member[0] != 0) bad(problems, std::string("analog_stream.") + member, "range");
   std::size_t meter_count = 0;
   for (const MeterSetting& meter : s.meters) if (meter.enabled) ++meter_count;
   if (meter_count + analog_count > kMaxChannels) bad(problems, "analogs", "too_many");
@@ -259,9 +278,12 @@ inline std::string to_json(const Settings& s, bool secrets) {
   w.key("analogs").begin_array();
   for (const AnalogSetting& input : s.analogs) {
     w.begin_object().field("enabled", input.enabled).field("channel", input.channel).field("label", input.label).field("pin", input.pin).field("quantity", input.quantity).field("mode", input.mode)
-        .key("scale").number(input.scale).key("offset_v").number(input.offset_v).key("zero_below").number(input.zero_below).key("nominal_voltage_v").number(input.nominal_voltage_v).end_object();
+        .key("scale").number(input.scale).key("offset_v").number(input.offset_v).key("zero_below").number(input.zero_below).key("nominal_voltage_v").number(input.nominal_voltage_v)
+        .key("cal_gain").number(input.cal_gain).key("cal_offset_mv").number(input.cal_offset_mv).end_object();
   }
   w.end_array();
+  w.key("analog_stream").begin_object().field("continuous", s.analog_stream.continuous).field("sample_rate_hz", s.analog_stream.sample_rate_hz).field("window_ms", s.analog_stream.window_ms)
+      .field("min_cycles", s.analog_stream.min_cycles).field("hysteresis_mv", s.analog_stream.hysteresis_mv).field("min_hz", s.analog_stream.min_hz).field("max_hz", s.analog_stream.max_hz).end_object();
   node_write_tail(w, s);
   w.end_object();
   return w.str();

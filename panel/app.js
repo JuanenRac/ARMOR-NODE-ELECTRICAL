@@ -368,7 +368,9 @@ function networkPage() {
       options: [[0, t("autoRestartNever")], [1, t("autoRestart1")], [2, t("autoRestart2")], [3, t("autoRestart3")], [4, t("autoRestart4")], [6, t("autoRestart6")], [12, t("autoRestart12")], [24, t("autoRestart24")], [48, t("autoRestart48")]] }),
       note(t("autoRestartNote"), "info"),
       field("loginLimit", "system.login_limit_per_minute", { type: "number", min: 0, max: 120 }), note(t("loginLimitNote"), "info"),
-      field("sealSecrets", "security.seal_secrets", { type: "checkbox" }), note(t("sealSecretsNote"), "info")),
+      field("sealSecrets", "security.seal_secrets", { type: "checkbox" }), note(t("sealSecretsNote"), "info"),
+      field("otaCheckBoard", "security.ota_check_board", { type: "checkbox" }),
+      field("otaRequireMark", "security.ota_require_board_mark", { type: "checkbox" }), note(t("otaBoardNote"), "info")),
     isAdmin() ? card(t("configBackupTitle"),
       el("div", { class: "row" },
         el("button", { class: "b", tip: "exportConfig", onclick: exportConfig }, t("exportConfig")),
@@ -611,6 +613,8 @@ function analogCard(index) {
         cfg.mode === "dc" ? field("analogOffset", base + "offset_v", { type: "number", step: "any", hint: t("analogOffsetHint") }) : null,
         field("analogZero", base + "zero_below", { type: "number", step: "any", min: 0 }),
         cfg.quantity === "current" ? field("analogNominal", base + "nominal_voltage_v", { type: "number", step: "any", min: 0, max: 1000, hint: t("analogNominalHint") }) : null),
+      el("div", { class: "row" }, field("analogCalGain", base + "cal_gain", { type: "number", step: "any", min: 0.5, max: 2, hint: t("analogCalHint") }),
+        cfg.mode === "dc" ? field("analogCalOffset", base + "cal_offset_mv", { type: "number", step: "any", min: -500, max: 500 }) : null),
       st.enabled ? el("div", { class: "actions" }, el("span", { id: "analog-pill-" + index }, psPill(st.state)), el("span", { class: "muted", id: "analog-live-" + index }, st.state === "reading" ? analogLiveText(index, st) : "")) : null,
       st.error ? el("p", { class: "err" }, L["ane_" + st.error] ? t("ane_" + st.error) : st.error) : null] : null);
 }
@@ -639,10 +643,21 @@ function remoteCard() {
     S.cfg.remote.relays ? [field("remoteTimeout", "remote.link_timeout_s", { type: "number", min: 0, max: 86400, hint: t("remoteTimeoutHint") }), el("p", { class: "hint" }, t("remoteStudio", node))] : null);
 }
 
+// How the analog inputs are read: one sample at a time (the default) or as a stream the converter fills by itself, measured over whole cycles of the mains.
+function analogStreamCard() {
+  const on = S.cfg.analog_stream && S.cfg.analog_stream.continuous;
+  return el("section", { class: "card" }, el("h2", {}, t("analogStreamTitle")),
+    field("analogStreamOn", "analog_stream.continuous", { type: "checkbox", rerender: true }),
+    on ? [el("div", { class: "row" }, field("analogStreamRate", "analog_stream.sample_rate_hz", { type: "number", min: 2000, max: 80000 }), field("analogStreamWindow", "analog_stream.window_ms", { type: "number", min: 50, max: 1000 })),
+      el("div", { class: "row" }, field("analogStreamCycles", "analog_stream.min_cycles", { type: "number", min: 2, max: 50 }), field("analogStreamHyst", "analog_stream.hysteresis_mv", { type: "number", min: 1, max: 500 })),
+      el("div", { class: "row" }, field("analogStreamMinHz", "analog_stream.min_hz", { type: "number", min: 20, max: 100 }), field("analogStreamMaxHz", "analog_stream.max_hz", { type: "number", min: 20, max: 100 }))] : null,
+    note(t("analogStreamNote"), "info"));
+}
+
 function ioPage() {
   return el("div", {}, note(t("relaysWarn")), el("p", { class: "muted" }, t("ioIntro")), note(t("ioRestart"), "info"),
     el("h2", { class: "section" }, t("relaysTitle")), remoteCard(), el("div", { class: "grid wide" }, Array.from({ length: 8 }, (_, i) => relayCard(i))),
-    el("h2", { class: "section" }, t("analogTitle")), note(t("analogWarn")), el("div", { class: "grid wide" }, Array.from({ length: 8 }, (_, i) => analogCard(i))));
+    el("h2", { class: "section" }, t("analogTitle")), note(t("analogWarn")), analogStreamCard(), el("div", { class: "grid wide" }, Array.from({ length: 8 }, (_, i) => analogCard(i))));
 }
 
 const num = (value, digits) => (typeof value === "number" ? value.toFixed(digits) : "—");

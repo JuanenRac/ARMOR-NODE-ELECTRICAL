@@ -17,6 +17,7 @@ add_executable(test_config test_config.cpp)
 add_executable(test_runner test_runner.cpp)
 add_executable(test_ble test_ble.cpp)
 add_executable(test_io test_io.cpp)
+add_executable(test_adc_stream test_adc_stream.cpp)
 add_executable(test_switch_set test_switch_set.cpp)
 add_executable(emit_samples emit_samples.cpp)
 
@@ -31,6 +32,9 @@ target_compile_definitions(test_shared_eth PRIVATE ARMOR_BOARD_S3_ETH=1)
 add_executable(test_shared_node test_shared_node.cpp)
 add_executable(test_shared_node_eth test_shared_node.cpp)
 target_compile_definitions(test_shared_node_eth PRIVATE ARMOR_BOARD_S3_ETH=1)
+add_executable(test_image_board test_image_board.cpp)
+add_executable(test_image_board_eth test_image_board.cpp)
+target_compile_definitions(test_image_board_eth PRIVATE ARMOR_BOARD_S3_ETH=1)
 
 enable_testing()
 add_test(NAME release COMMAND test_release)
@@ -44,6 +48,7 @@ add_test(NAME config COMMAND test_config)
 add_test(NAME runner COMMAND test_runner)
 add_test(NAME ble COMMAND test_ble)
 add_test(NAME io COMMAND test_io)
+add_test(NAME adc_stream COMMAND test_adc_stream)
 add_test(NAME switch_set COMMAND test_switch_set ${CMAKE_CURRENT_SOURCE_DIR}/../../ARMOR-COMMON/conformance)
 add_test(NAME shared COMMAND test_shared)
 add_test(NAME control COMMAND test_control ${CMAKE_CURRENT_SOURCE_DIR}/../../ARMOR-COMMON/conformance)
@@ -51,6 +56,8 @@ add_test(NAME diag COMMAND test_diag)
 add_test(NAME shared_eth COMMAND test_shared_eth)
 add_test(NAME shared_node COMMAND test_shared_node)
 add_test(NAME shared_node_eth COMMAND test_shared_node_eth)
+add_test(NAME image_board COMMAND test_image_board)
+add_test(NAME image_board_eth COMMAND test_image_board_eth)
 add_test(NAME limits COMMAND test_limits)
 
 # the panel's texts: eight languages in every row and a text for every error the firmware can answer with
@@ -59,6 +66,8 @@ if(Python3_FOUND)
   add_test(NAME panel_text COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/check_panel_text.py)
   # no task keeps a big copy of the settings on its small stack, every task has the stack its job needs, GitHub's long redirects fit the HTTP buffer
   add_test(NAME task_safety COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/check_task_safety.py)
+  # every task that keeps the node's job going (meters, analog inputs, relays, the Zigbee radio) is watched by the task watchdog
+  add_test(NAME watchdog COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/check_watchdog.py)
   # a saved time zone applies at once; the panel can still say that a restart is needed
   add_test(NAME save_paths COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/check_save_paths.py)
   # the Bluetooth set-up keeps the session of the phone under its lock, and a request or an answer never crosses to another connection

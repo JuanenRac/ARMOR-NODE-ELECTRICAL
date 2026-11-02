@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Linguaggio">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-382264%20checks-2ea44f.svg" alt="Test">
+  <img src="https://img.shields.io/badge/Tests-382548%20checks-2ea44f.svg" alt="Test">
   <img src="https://img.shields.io/badge/Version-0.5.3-0f6cbd.svg" alt="Versione">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturità">
 </p>
 
 ---
 
-**Controllo di onestà - cosa funziona oggi:** Il nucleo (i frame dei contatori PZEM-004T v3 e PZEM-017, il bus che li interroga, il messaggio del nodo, gli ingressi analogici e le regole di commutazione: 382.264 controlli in 19 programmi di test, 375.036 dei quali sulle regole di commutazione) è provato su un computer con contatori e contattori sostitutivi, e i messaggi che produce sono accettati da ARMOR-COMMON. Il firmware del nodo (le impostazioni, la linea seriale, le pagine Contatori e Letture del suo pannello, Bluetooth, aggiornamenti firmati) si compila nel contenitore ESP-IDF 5.5.5 per entrambe le schede. **Non ha mai girato su una scheda, nulla è stato collegato a un contatore o a un contattore, e nulla qui commuta niente.**
+**Controllo di onestà - cosa funziona oggi:** Il nucleo (i frame dei contatori PZEM-004T v3 e PZEM-017, il bus che li interroga, il messaggio del nodo, gli ingressi analogici e le regole di commutazione: 382.548 controlli in 19 programmi di test, 375.036 dei quali sulle regole di commutazione) è provato su un computer con contatori e contattori sostitutivi, e i messaggi che produce sono accettati da ARMOR-COMMON. Il firmware del nodo (le impostazioni, la linea seriale, le pagine Contatori e Letture del suo pannello, Bluetooth, aggiornamenti firmati) si compila nel contenitore ESP-IDF 5.5.5 per entrambe le schede. **Non ha mai girato su una scheda, nulla è stato collegato a un contatore o a un contattore, e nulla qui commuta niente.**
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturità | Funzionale |
 | Ruolo | Nodo di campo elettrico: contatori, ingressi e manovra (famiglia: Field Nodes, padre: ARMOR-COMMON) |
 | Tecnologia | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Test | 382264 verifiche in 19 programmi host e 5 verifiche Python (`ctest`) |
+| Test | 382548 verifiche in 22 programmi host e 6 verifiche Python (`ctest`) |
 | Apparecchiature | Contatori PZEM-004T v3 e PZEM-017 (fino a 16), ingressi analogici, relè; manovra spenta di default |
 | Gira su | Una scheda ESP32-S3 (Ethernet o Wi-Fi); test su host su qualsiasi computer |
 | Su hardware reale | Ancora nessuno: nessuna scheda montata né contatore o contattore collegati; nulla commuta niente |
@@ -58,7 +58,7 @@ Ogni riga è una parte di questo repository e il semaforo dice a che punto è og
 | Area | Stato | Cosa significa qui |
 |---|---|---|
 | Software | 🟢 | Il firmware compila nel contenitore ESP-IDF 5.5.5 per entrambe le schede (Wi-Fi ed Ethernet). |
-| Test | 🟢 | Superano 382.264 controlli in 19 programmi host (`ctest`), 375.036 dei quali sulle regole di manovra; i contatori e i contattori sono simulazioni. |
+| Test | 🟢 | Superano 382.548 controlli in 22 programmi host (`ctest`), 375.036 dei quali sulle regole di manovra; i contatori e i contattori sono simulazioni. |
 | Protocolli e dati | 🟡 | I frame e le letture dei PZEM-004T v3 e PZEM-017 sono verificati contro i frame documentati e campioni registrati; nessun contatore ha ancora risposto. |
 | Interfaccia | 🟡 | Le pagine dei contatori e delle letture del pannello web sono state provate in un browser contro un nodo simulato, non su una scheda. |
 | Hardware | 🔴 | Nessuna scheda costruita e nessun contatore o contattore collegati: nulla ha ancora funzionato su apparecchiature reali. |
@@ -156,6 +156,11 @@ La rete (230 V CA) e la corrente continua di un banco di batterie possono uccide
 | `switching_enabled` | off | La manovra è SPENTA salvo che questa impostazione, il server (`ARMOR_ELECTRICAL_SWITCHING=1`) e la lista di accesso del broker la consentano |
 | `CONFIG_ARMOR_NODE_ID`, `_SETUP_CODE`, `_FLEET_SECRET`, `_MQTT_*`, `_HEARTBEAT_S`, `_BLE_SETUP_MINUTES`, `_BOOT_FACTORY_RESET` | - | Le impostazioni che tutti i nodi condividono: il nome (vuoto dà `armor-` e gli ultimi byte del MAC), il codice di configurazione (vuoto: casuale), il segreto di flotta (16+ caratteri, mai nel repository), le prime impostazioni del broker, il battito (da 2 a 300 s), i minuti di configurazione Bluetooth (da 1 a 120) e il ripristino con BOOT (8 s nei primi 30 s) |
 | `system.login_limit_per_minute` | 30 (0-120) | Password errate al minuto prima che il pannello blocchi l'accesso a tutti (0 = nessun limite globale); si legge e si cambia da Studio (un pulsante su ogni nodo) o con `POST /api/v1/admin/nodes/settings`, dove l'accesso al pannello è usato una volta e mai conservato |
+| `security.ota_check_board` | on | Rifiutare un firmware caricato costruito per l'altra scheda (Wi-Fi o Ethernet); l'immagine porta una marca della sua scheda che il nodo legge mentre arriva |
+| `security.ota_require_board_mark` | on | Rifiutare anche un'immagine senza marca della scheda (un firmware vecchio); disattivare per tornare a una versione fatta prima delle marche |
+| `analog_stream.continuous` | off | Leggere gli ingressi analogici come flusso che il convertitore riempie da solo (DMA) e prendere il valore efficace di un ingresso alternato su cicli interi della rete trovati dai loro passaggi per lo zero; ha effetto dopo un riavvio |
+| `analog_stream.sample_rate_hz`, `window_ms`, `min_cycles`, `hysteresis_mv`, `min_hz`, `max_hz` | 20000, 400, 5, 30, 40, 70 | La frequenza di campionamento del flusso (2000-80000), la finestra più lunga per cui si legge un ingresso, i cicli interi necessari per misurare sui cicli (2-50), l'escursione in millivolt che conta come ciclo e le frequenze che possono essere la rete |
+| `analogs[].cal_gain`, `cal_offset_mv` | 1 (0.5-2), 0 (+-500) | La calibrazione di un ingresso, misurata rispetto a un riferimento come un multimetro: corretto = (lettura in mV - offset) x guadagno; 1 e 0 lasciano la lettura come l'ha data il chip (un ingresso alternato ha solo il guadagno) |
 
 ## 🚀 Avvio rapido
 
@@ -178,7 +183,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-19 programmi di test su host e 5 verifiche Python girano con `ctest`; 382264 verifiche contate dai programmi host, compilati con `-Werror`.
+22 programmi di test su host e 6 verifiche Python girano con `ctest`; 382548 verifiche contate dai programmi host, compilati con `-Werror`.
 
 Verifiche Python: i testi del pannello in otto lingue, i task, i percorsi di salvataggio, la sessione Bluetooth sotto il suo lock e i percorsi chiamati dal pannello (e, in alcuni nodi, i codici HTTP o i glifi dei caratteri)
 

@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Language">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-382264%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-382548%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.3-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**诚实性检查 - 今天真正能运行的部分：** 核心（PZEM-004T v3 和 PZEM-017 电表的帧、轮询它们的总线、节点的消息、模拟输入和切换规则：19 个测试程序中的 382,264 项检查，其中 375,036 项针对切换规则）在计算机上用替身电表和接触器测试，它生成的消息被 ARMOR-COMMON 接受。节点固件（设置、串行线路、面板的电表和读数页面、蓝牙、签名更新）可在 ESP-IDF 5.5.5 容器中为两种板子构建。**它从未在板上运行，没有连接任何电表或接触器，这里的任何东西都不会切换任何设备。**
+**诚实性检查 - 今天真正能运行的部分：** 核心（PZEM-004T v3 和 PZEM-017 电表的帧、轮询它们的总线、节点的消息、模拟输入和切换规则：22 个测试程序中的 382,548 项检查，其中 375,036 项针对切换规则）在计算机上用替身电表和接触器测试，它生成的消息被 ARMOR-COMMON 接受。节点固件（设置、串行线路、面板的电表和读数页面、蓝牙、签名更新）可在 ESP-IDF 5.5.5 容器中为两种板子构建。**它从未在板上运行，没有连接任何电表或接触器，这里的任何东西都不会切换任何设备。**
 
 ---
 
@@ -41,7 +41,7 @@
 | 成熟度 | 可用 |
 | 角色 | 电气现场节点：电表、输入和开关操作（家族：Field Nodes，上级：ARMOR-COMMON） |
 | 技术栈 | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| 测试 | 382264 项检查（19 个主机程序和 5 项 Python 检查，`ctest`） |
+| 测试 | 382548 项检查（22 个主机程序和 6 项 Python 检查，`ctest`） |
 | 设备 | PZEM-004T v3 和 PZEM-017 电表（最多 16 台）、模拟输入、继电器；开关操作默认关闭 |
 | 运行位置 | ESP32-S3 电路板（以太网或 Wi-Fi）；主机测试可在任何计算机上运行 |
 | 真实硬件 | 暂无：没有制作板子，也没有连接电表或接触器；不会切换任何设备 |
@@ -58,7 +58,7 @@
 | 领域 | 状态 | 在这里的含义 |
 |---|---|---|
 | 软件 | 🟢 | 固件可在 ESP-IDF 5.5.5 容器中为两块板（Wi-Fi 和以太网）构建。 |
-| 测试 | 🟢 | 19 个主机程序中的 382,264 项检查通过（`ctest`），其中 375,036 项针对切换规则；电表和接触器均为模拟。 |
+| 测试 | 🟢 | 22 个主机程序中的 382,548 项检查通过（`ctest`），其中 375,036 项针对切换规则；电表和接触器均为模拟。 |
 | 协议与数据 | 🟡 | PZEM-004T v3 和 PZEM-017 的帧与读数已对照文档中的帧和录制的样本检查；目前还没有电表响应过。 |
 | 界面 | 🟡 | 网页面板的电表和读数页面已在浏览器中对模拟节点测试过，尚未在板子上测试。 |
 | 硬件 | 🔴 | 尚未制作板子，也没有连接电表或接触器：还没有在真实设备上运行过。 |
@@ -156,6 +156,11 @@ ARMOR-NODE-ELECTRICAL 通过电表测量住宅的交流和直流网络，并保�
 | `switching_enabled` | off | 除非此设置、服务器（`ARMOR_ELECTRICAL_SWITCHING=1`）和代理的访问列表都允许，否则开关操作为关闭 |
 | `CONFIG_ARMOR_NODE_ID`, `_SETUP_CODE`, `_FLEET_SECRET`, `_MQTT_*`, `_HEARTBEAT_S`, `_BLE_SETUP_MINUTES`, `_BOOT_FACTORY_RESET` | - | 所有节点共有的设置：名称（为空则为 `armor-` 加 MAC 的最后字节）、设置码（为空则随机）、机群密钥（16 个字符以上，绝不放入仓库）、最初的代理设置、心跳（2 到 300 秒）、蓝牙设置的分钟数（1 到 120）以及用 BOOT 重置（前 30 秒内按 8 秒） |
 | `system.login_limit_per_minute` | 30 (0-120) | 面板对所有人锁定登录前每分钟允许的错误密码次数（0 = 无全局限制）；可在 Studio（每个节点上的按钮）或通过 `POST /api/v1/admin/nodes/settings` 读取和修改，面板登录信息只使用一次，绝不保存 |
+| `security.ota_check_board` | on | 拒绝为另一种电路板（Wi-Fi 或以太网）构建的上传固件；镜像带有所属电路板的标记，节点在接收时读取 |
+| `security.ota_require_board_mark` | on | 同时拒绝不带电路板标记的镜像（较旧的固件）；要退回到标记出现之前的版本时请关闭 |
+| `analog_stream.continuous` | off | 以转换器自行填充的数据流（DMA）读取模拟输入，并按过零点找到的整数个市电周期计算交流输入的有效值；重启后生效 |
+| `analog_stream.sample_rate_hz`, `window_ms`, `min_cycles`, `hysteresis_mv`, `min_hz`, `max_hz` | 20000, 400, 5, 30, 40, 70 | 数据流的采样率（2000–80000）、读取一个输入的最长窗口、按周期测量所需的完整周期数（2–50）、算作一个周期的摆幅（毫伏）以及可能是市电的频率 |
+| `analogs[].cal_gain`, `cal_offset_mv` | 1 (0.5-2), 0 (+-500) | 对照万用表等基准测得的输入校准：校正值 = (读数 mV - 偏移) x 增益；1 和 0 表示保持芯片给出的读数（交流输入只有增益） |
 
 ## 🚀 快速开始
 
@@ -178,7 +183,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-`ctest` 运行 19 个主机测试程序和 5 个 Python 检查；主机程序统计的检查共 382264 项，使用 `-Werror` 构建。
+`ctest` 运行 22 个主机测试程序和 6 个 Python 检查；主机程序统计的检查共 382548 项，使用 `-Werror` 构建。
 
 Python 检查：八种语言的面板文字、任务、保存路径、受锁保护的蓝牙会话以及面板调用的路由（部分节点还包括 HTTP 状态码或字体字形）
 

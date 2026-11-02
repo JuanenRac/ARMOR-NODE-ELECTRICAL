@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Language">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-382264%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-382548%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.3-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**Honesty check - what runs today:** The core (the frames of the PZEM-004T v3 and PZEM-017 meters, the bus that asks them, the message of the node, the analogue inputs and the rules for switching: 382,264 checks in 19 test programs, 375,036 of them on the switching rules) is tested on a computer with stand-in meters and contactors, and the messages it makes are accepted by ARMOR-COMMON. The firmware of the node (the settings, the serial line, the Meters and Readings pages of its panel, Bluetooth, signed updates) builds in the ESP-IDF 5.5.5 container for both boards. **It has never run on a board, nothing has been connected to a meter or a contactor, and nothing here switches anything.**
+**Honesty check - what runs today:** The core (the frames of the PZEM-004T v3 and PZEM-017 meters, the bus that asks them, the message of the node, the analogue inputs and the rules for switching: 382,548 checks in 22 test programs, 375,036 of them on the switching rules) is tested on a computer with stand-in meters and contactors, and the messages it makes are accepted by ARMOR-COMMON. The firmware of the node (the settings, the serial line, the Meters and Readings pages of its panel, Bluetooth, signed updates) builds in the ESP-IDF 5.5.5 container for both boards. **It has never run on a board, nothing has been connected to a meter or a contactor, and nothing here switches anything.**
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturity | Functional |
 | Role | Electrical field node: meters, inputs and switching (family: Field Nodes, parent: ARMOR-COMMON) |
 | Stack | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 382264 checks in 19 host programs and 5 Python checks (`ctest`) |
+| Tests | 382548 checks in 22 host programs and 6 Python checks (`ctest`) |
 | Equipment | PZEM-004T v3 and PZEM-017 meters (up to 16), analogue inputs, relays; switching off by default |
 | Runs on | An ESP32-S3 board (Ethernet or Wi-Fi); host tests on any computer |
 | On real hardware | None yet: no board built and no meter or contactor connected; nothing switches anything |
@@ -58,7 +58,7 @@ Each line is one part of this repository and the light says how far it is today.
 | Area | State | What it means here |
 |---|---|---|
 | Software | 🟢 | The firmware builds in the ESP-IDF 5.5.5 container for both boards (Wi-Fi and Ethernet). |
-| Tests | 🟢 | 382,264 checks in 19 host programs pass (`ctest`), 375,036 of them on the switching rules; the meters and contactors are stand-ins. |
+| Tests | 🟢 | 382,548 checks in 22 host programs pass (`ctest`), 375,036 of them on the switching rules; the meters and contactors are stand-ins. |
 | Protocols and data | 🟡 | The PZEM-004T v3 and PZEM-017 frames and readings are checked against the documented frames and recorded samples; no meter has answered yet. |
 | Interface | 🟡 | The Meters and Readings pages of the web panel are exercised in a browser against a stand-in node, not on a board. |
 | Hardware | 🔴 | No board built and no meter or contactor connected: nothing has run on real equipment yet. |
@@ -156,6 +156,11 @@ Mains (230 V AC) and the DC of a battery bank can kill and start fires. [docs/SA
 | `switching_enabled` | off | Switching is OFF unless this setting, the server (`ARMOR_ELECTRICAL_SWITCHING=1`) and the broker's access list all allow it |
 | `CONFIG_ARMOR_NODE_ID`, `_SETUP_CODE`, `_FLEET_SECRET`, `_MQTT_*`, `_HEARTBEAT_S`, `_BLE_SETUP_MINUTES`, `_BOOT_FACTORY_RESET` | - | The settings every node shares: the name (empty gives `armor-` and the last bytes of the MAC), the set-up code (empty: random), the fleet secret (16+ characters, never in the repository), the first broker settings, the heartbeat (2 to 300 s), the minutes of Bluetooth set-up (1 to 120) and the reset with BOOT (8 s in the first 30 s) |
 | `system.login_limit_per_minute` | 30 (0-120) | Wrong passwords per minute before the panel locks sign-in for everyone (0 = no global limit); read and change it from Studio (a button on every node) or with `POST /api/v1/admin/nodes/settings`, where the panel login is used once and never kept |
+| `security.ota_check_board` | on | Refuse an uploaded firmware that was built for the other board (Wi-Fi or Ethernet); the image carries a mark of its board that the node reads while it arrives |
+| `security.ota_require_board_mark` | on | Also refuse an image that carries no board mark (an older firmware); turn it off to go back to a version made before the marks |
+| `analog_stream.continuous` | off | Read the analog inputs as a stream the converter fills by itself (DMA) and take the effective value of an alternating input over whole cycles of the mains found by their zero crossings; takes effect after a restart |
+| `analog_stream.sample_rate_hz`, `window_ms`, `min_cycles`, `hysteresis_mv`, `min_hz`, `max_hz` | 20000, 400, 5, 30, 40, 70 | The stream's sample rate (2000-80000), the longest window an input is read for, the whole cycles needed to measure over cycles (2-50), the swing in millivolts that counts as a cycle and the frequencies that can be the mains |
+| `analogs[].cal_gain`, `cal_offset_mv` | 1 (0.5-2), 0 (+-500) | The calibration of an input, measured against a reference such as a multimeter: corrected = (reading in mV - offset) x gain; 1 and 0 leave the reading as the chip gave it (an alternating input has the gain only) |
 
 ## 🚀 Quick start
 
@@ -178,7 +183,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-19 host test programs and 5 Python checks run under `ctest`; 382264 checks counted by the host programs, built with `-Werror`.
+22 host test programs and 6 Python checks run under `ctest`; 382548 checks counted by the host programs, built with `-Werror`.
 
 Python checks: the panel texts in eight languages, the tasks, the save paths, the Bluetooth session under its lock and the routes the panel calls (and, in some nodes, the HTTP codes or the glyphs of the fonts)
 

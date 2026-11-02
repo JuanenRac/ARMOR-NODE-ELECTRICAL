@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "adc_stream.hpp"
 #include "electrical_config.hpp"
 #include "electrical_json.hpp"
 
@@ -35,13 +36,23 @@ inline double rms_about_mean(const std::vector<double>& samples) {
   return std::sqrt(sum / static_cast<double>(samples.size()));
 }
 
-// The quantity an input measures, in volts or amps, from samples in millivolts.
-inline double quantity_of(const config::AnalogSetting& input, const std::vector<double>& millivolts) {
+// The calibration measured for this input (core/adc_stream.hpp); the identity until one is set.
+inline adcstream::Calibration calibration_of(const config::AnalogSetting& input) { return adcstream::Calibration{input.cal_gain, input.cal_offset_mv}; }
+
+// The quantity an input measures, in volts or amps, from the average and the effective value (around the average) of what the converter saw, in millivolts, as the chip's own calibration gave it.
+// The input's calibration is applied here: an effective value only has the gain, the offset is the same on every sample and drops out of a value taken around the average.
+inline double quantity_from(const config::AnalogSetting& input, double mean_mv, double rms_mv) {
+  const adcstream::Calibration calibration = calibration_of(input);
   double value = 0.0;
-  if (input.mode == "ac") value = rms_about_mean(millivolts) / 1000.0 * std::fabs(input.scale);
-  else value = (mean(millivolts) / 1000.0 - input.offset_v) * input.scale;
+  if (input.mode == "ac") value = rms_mv * calibration.gain / 1000.0 * std::fabs(input.scale);
+  else value = (adcstream::apply(calibration, mean_mv) / 1000.0 - input.offset_v) * input.scale;
   if (std::fabs(value) < input.zero_below) value = 0.0;
   return value;
+}
+
+// The quantity an input measures, in volts or amps, from samples in millivolts.
+inline double quantity_of(const config::AnalogSetting& input, const std::vector<double>& millivolts) {
+  return quantity_from(input, mean(millivolts), rms_about_mean(millivolts));
 }
 
 // The energy a current input has made at its nominal voltage since the node started: it only grows.
@@ -57,10 +68,8 @@ class Energy {
 
 inline double clamp(double value, double lowest, double highest) { return std::min(highest, std::max(lowest, value)); }
 
-// One input's channel. `elapsed_ms` is the time since the last reading (for the energy). A set of samples that is empty is no reading: the channel is not produced.
-inline bool make_channel(const config::AnalogSetting& input, const std::vector<double>& millivolts, std::uint64_t elapsed_ms, Energy& energy, electrical::AnalogChannel& out) {
-  if (millivolts.empty()) return false;
-  const double value = quantity_of(input, millivolts);
+// One input's channel from the value it measured. `elapsed_ms` is the time since the last reading (for the energy).
+inline void fill_channel(const config::AnalogSetting& input, double value, std::uint64_t elapsed_ms, Energy& energy, electrical::AnalogChannel& out) {
   out = electrical::AnalogChannel{};
   out.id = input.channel;
   out.label = input.label;
@@ -81,6 +90,20 @@ inline bool make_channel(const config::AnalogSetting& input, const std::vector<d
       out.energy_kwh = clamp(energy.kwh(), 0.0, 10000000.0);
     }
   }
+}
+
+// One input's channel. A set of samples that is empty is no reading: the channel is not produced.
+inline bool make_channel(const config::AnalogSetting& input, const std::vector<double>& millivolts, std::uint64_t elapsed_ms, Energy& energy, electrical::AnalogChannel& out) {
+  if (millivolts.empty()) return false;
+  fill_channel(input, quantity_of(input, millivolts), elapsed_ms, energy, out);
+  return true;
+}
+
+// The same from a window read as a stream (core/adc_stream.hpp): the average and the effective value come from the Measurement, over whole cycles when it found them. The samples are the
+// chip's, not yet calibrated: the input's calibration is applied in quantity_from.
+inline bool make_channel_measured(const config::AnalogSetting& input, const adcstream::Measurement& measured, std::uint64_t elapsed_ms, Energy& energy, electrical::AnalogChannel& out) {
+  if (!measured.valid) return false;
+  fill_channel(input, quantity_from(input, measured.mean_mv, measured.rms_mv), elapsed_ms, energy, out);
   return true;
 }
 

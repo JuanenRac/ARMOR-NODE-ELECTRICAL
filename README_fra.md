@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Langage">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-382264%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-382548%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.3-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturité">
 </p>
 
 ---
 
-**Vérification d'honnêteté - ce qui fonctionne aujourd'hui :** Le cœur (les trames des compteurs PZEM-004T v3 et PZEM-017, le bus qui les interroge, le message du nœud, les entrées analogiques et les règles de commutation : 382 264 vérifications dans 19 programmes de test, dont 375 036 sur les règles de commutation) est testé sur un ordinateur avec des compteurs et contacteurs factices, et les messages qu'il produit sont acceptés par ARMOR-COMMON. Le firmware du nœud (les réglages, la ligne série, les pages Compteurs et Mesures de son panneau, Bluetooth, mises à jour signées) se compile dans le conteneur ESP-IDF 5.5.5 pour les deux cartes. **Il n'a jamais tourné sur une carte, rien n'a été connecté à un compteur ni à un contacteur, et rien ici ne commute quoi que ce soit.**
+**Vérification d'honnêteté - ce qui fonctionne aujourd'hui :** Le cœur (les trames des compteurs PZEM-004T v3 et PZEM-017, le bus qui les interroge, le message du nœud, les entrées analogiques et les règles de commutation : 382 548 vérifications dans 22 programmes de test, dont 375 036 sur les règles de commutation) est testé sur un ordinateur avec des compteurs et contacteurs factices, et les messages qu'il produit sont acceptés par ARMOR-COMMON. Le firmware du nœud (les réglages, la ligne série, les pages Compteurs et Mesures de son panneau, Bluetooth, mises à jour signées) se compile dans le conteneur ESP-IDF 5.5.5 pour les deux cartes. **Il n'a jamais tourné sur une carte, rien n'a été connecté à un compteur ni à un contacteur, et rien ici ne commute quoi que ce soit.**
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturité | Fonctionnel |
 | Rôle | Nœud de terrain électrique : compteurs, entrées et manœuvre (famille : Field Nodes, parent : ARMOR-COMMON) |
 | Technologie | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 382264 vérifications dans 19 programmes hôte et 5 contrôles Python (`ctest`) |
+| Tests | 382548 vérifications dans 22 programmes hôte et 6 contrôles Python (`ctest`) |
 | Équipements | Compteurs PZEM-004T v3 et PZEM-017 (jusqu'à 16), entrées analogiques, relais ; manœuvre désactivée par défaut |
 | Fonctionne sur | Une carte ESP32-S3 (Ethernet ou Wi-Fi) ; tests sur hôte sur n'importe quel ordinateur |
 | Sur matériel réel | Aucun pour l'instant : aucune carte montée ni compteur ou contacteur connecté ; rien ne commute quoi que ce soit |
@@ -58,7 +58,7 @@ Chaque ligne est une partie de ce dépôt et le feu dit où elle en est aujourd'
 | Domaine | État | Ce que cela veut dire ici |
 |---|---|---|
 | Logiciel | 🟢 | Le firmware compile dans le conteneur ESP-IDF 5.5.5 pour les deux cartes (Wi-Fi et Ethernet). |
-| Tests | 🟢 | 382 264 vérifications dans 19 programmes d'hôte réussissent (`ctest`), dont 375 036 sur les règles de manœuvre ; les compteurs et contacteurs sont des simulations. |
+| Tests | 🟢 | 382 548 vérifications dans 22 programmes d'hôte réussissent (`ctest`), dont 375 036 sur les règles de manœuvre ; les compteurs et contacteurs sont des simulations. |
 | Protocoles et données | 🟡 | Les trames et lectures des PZEM-004T v3 et PZEM-017 sont vérifiées par rapport aux trames documentées et à des échantillons enregistrés ; aucun compteur n'a encore répondu. |
 | Interface | 🟡 | Les pages des compteurs et des mesures du panneau web ont été essayées dans un navigateur contre un nœud simulé, pas sur une carte. |
 | Matériel | 🔴 | Aucune carte construite ni compteur ou contacteur connectés : rien n'a encore tourné sur de vrais équipements. |
@@ -156,6 +156,11 @@ Le secteur (230 V CA) et le courant continu d'un banc de batteries peuvent tuer 
 | `switching_enabled` | off | La manœuvre est DÉSACTIVÉE sauf si ce réglage, le serveur (`ARMOR_ELECTRICAL_SWITCHING=1`) et la liste d'accès du broker l'autorisent |
 | `CONFIG_ARMOR_NODE_ID`, `_SETUP_CODE`, `_FLEET_SECRET`, `_MQTT_*`, `_HEARTBEAT_S`, `_BLE_SETUP_MINUTES`, `_BOOT_FACTORY_RESET` | - | Les réglages que tous les nœuds partagent : le nom (vide donne `armor-` et les derniers octets de la MAC), le code de configuration (vide : aléatoire), le secret de flotte (16+ caractères, jamais dans le dépôt), les premiers réglages du broker, le battement (de 2 à 300 s), les minutes de configuration Bluetooth (de 1 à 120) et la réinitialisation avec BOOT (8 s dans les 30 premières s) |
 | `system.login_limit_per_minute` | 30 (0-120) | Mots de passe erronés par minute avant que le panneau verrouille la connexion pour tous (0 = pas de limite globale) ; on le lit et le change depuis Studio (un bouton sur chaque nœud) ou avec `POST /api/v1/admin/nodes/settings`, l'identifiant du panneau étant utilisé une fois et jamais conservé |
+| `security.ota_check_board` | on | Refuser un firmware envoyé construit pour l'autre carte (Wi-Fi ou Ethernet) ; l'image porte une marque de sa carte que le nœud lit à l'arrivée |
+| `security.ota_require_board_mark` | on | Refuser aussi une image sans marque de carte (un ancien firmware) ; à désactiver pour revenir à une version faite avant les marques |
+| `analog_stream.continuous` | off | Lire les entrées analogiques en flux que le convertisseur remplit seul (DMA) et prendre la valeur efficace d'une entrée alternative sur des cycles entiers du secteur repérés par leurs passages par zéro ; effet après un redémarrage |
+| `analog_stream.sample_rate_hz`, `window_ms`, `min_cycles`, `hysteresis_mv`, `min_hz`, `max_hz` | 20000, 400, 5, 30, 40, 70 | La fréquence d'échantillonnage du flux (2000-80000), la fenêtre la plus longue pendant laquelle une entrée est lue, les cycles entiers requis pour mesurer sur des cycles (2-50), l'excursion en millivolts qui compte comme un cycle et les fréquences qui peuvent être le secteur |
+| `analogs[].cal_gain`, `cal_offset_mv` | 1 (0.5-2), 0 (+-500) | L'étalonnage d'une entrée, mesuré par rapport à une référence comme un multimètre : corrigé = (lecture en mV - décalage) x gain ; 1 et 0 laissent la lecture telle que la puce l'a donnée (une entrée alternative n'a que le gain) |
 
 ## 🚀 Démarrage rapide
 
@@ -178,7 +183,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-19 programmes de test sur hôte et 5 contrôles Python tournent sous `ctest` ; 382264 vérifications comptées par les programmes hôte, compilés avec `-Werror`.
+22 programmes de test sur hôte et 6 contrôles Python tournent sous `ctest` ; 382548 vérifications comptées par les programmes hôte, compilés avec `-Werror`.
 
 Contrôles Python : les textes du panneau en huit langues, les tâches, les chemins de sauvegarde, la session Bluetooth sous son verrou et les routes appelées par le panneau (et, dans certains nœuds, les codes HTTP ou les glyphes des polices)
 
