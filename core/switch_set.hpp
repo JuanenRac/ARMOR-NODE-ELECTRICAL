@@ -70,7 +70,14 @@ inline const char* side_name(Source source) { return source == Source::kA ? "a" 
 inline std::string command_topic(const std::string& node_id) { return valid_name(node_id, 64) ? "armor/electrical/" + node_id + "/command" : ""; }
 inline std::string result_topic(const std::string& node_id) { return valid_name(node_id, 64) ? "armor/electrical/" + node_id + "/result" : ""; }
 
-/// A command id or a token: lowercase letters and digits, eight to thirty-two.
+/// The id of a command: sixteen lowercase hexadecimal digits, the one format of every command in the family (ARMOR-COMMON, electrical_command.schema.json).
+inline bool valid_command_id(const std::string& text) {
+  if (text.size() != 16) return false;
+  for (char c : text) if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'))) return false;
+  return true;
+}
+
+/// A token: lowercase letters and digits, eight to thirty-two.
 inline bool valid_code(const std::string& text) {
   if (text.size() < 8 || text.size() > 32) return false;
   for (char c : text) if (!((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))) return false;
@@ -102,7 +109,7 @@ inline bool parse_command(std::string_view text, SwitchCommand& out, std::string
   if (stamp == nullptr || !stamp->is_number() || !std::isfinite(stamp->number) || stamp->number < 0 || stamp->number >= 9007199254740992.0 ||
       stamp->number != static_cast<double>(static_cast<long long>(stamp->number))) return fail("timestamp_ms");
   const json::Value* id = doc.get("command_id");
-  if (id == nullptr || !id->is_string() || !valid_code(id->text)) return fail("command_id");
+  if (id == nullptr || !id->is_string() || !valid_command_id(id->text)) return fail("command_id");
   const json::Value* target = doc.get("switch");
   if (target == nullptr || !target->is_string() || !valid_name(target->text, 32)) return fail("switch");
   const json::Value* action = doc.get("action");

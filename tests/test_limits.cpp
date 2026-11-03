@@ -302,6 +302,8 @@ static void test_names_and_topics() {
   for (const char* ok : {"0123abcd", "abcdefgh", "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"}) CHECK(valid_code(ok));
   for (const char* bad : {"", "abc", "0123abc", "0123ABCD", "0123abc-", "0123 abcd", "0123abcd\n"}) CHECK(!valid_code(bad));
   CHECK(!valid_code(std::string(33, 'a')));
+  for (const char* ok : {"c0ffee0123456789", "0123456789abcdef"}) CHECK(valid_command_id(ok));
+  for (const char* bad : {"", "c0ffee0", "c0ffee01", "c0ffee01234567890", "C0FFEE0123456789", "c0ffeezz12345678", "c0ffee012345678-", "c0ffee01234567 9"}) CHECK(!valid_command_id(bad));
 }
 
 static void test_the_reader_is_strict() {
