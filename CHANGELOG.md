@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.5.6] - Simulation bench: tests/simbench.cpp is built from the same core files as the firmware and is fed by ARMOR-SIMULATOR (python -m armorsimulator.nodebench --bus pzem) with the Modbus-RTU replies of the PZEM meters (flipped bits,... (and 1 more changes)
+
 - **Simulation bench:** `tests/sim_bench.cpp` is built from the same core files as the firmware and is fed by ARMOR-SIMULATOR (`python -m armor_simulator.node_bench --bus pzem`) with the Modbus-RTU replies of the PZEM meters (flipped bits, exceptions, silence, short or long replies, another meter's reply, impossible readings), and the answers are compared with what the documented rules require. The workflow `Simulation bench` runs it on every push, with no board and no ESP-IDF.
 - **The messages are tested against a seeded oracle:** the shared firmware now carries the readers and writers that ARMOR-COMMON generates from its schemas (`core/armor_wire.hpp`) and a host test (`tests/test_wire.cpp`) that reads the seeded cases of the contracts (each with the verdict of the Python validator) and checks, with the compiler and the flags of this project, that the generated validator, reader and writer agree on every one, and that the parser of this node for the switch command never accepts what the contract refuses. The shared control order is checked the same way.
 
