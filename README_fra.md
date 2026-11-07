@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Langage">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-388635%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-388777%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.6-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturité">
 </p>
 
 ---
 
-**Vérification d'honnêteté - ce qui fonctionne aujourd'hui :** Le cœur (les trames des compteurs PZEM-004T v3 et PZEM-017, le bus qui les interroge, le message du nœud, les entrées analogiques et les règles de commutation : 388 635 vérifications dans 24 programmes de test, dont 375 036 sur les règles de commutation) est testé sur un ordinateur avec des compteurs et contacteurs factices, et les messages qu'il produit sont acceptés par ARMOR-COMMON. Le firmware du nœud (les réglages, la ligne série, les pages Compteurs et Mesures de son panneau, Bluetooth, mises à jour signées) se compile dans le conteneur ESP-IDF 5.5.5 pour les deux cartes. **Il n'a jamais tourné sur une carte, rien n'a été connecté à un compteur ni à un contacteur, et rien ici ne commute quoi que ce soit.**
+**Vérification d'honnêteté - ce qui fonctionne aujourd'hui :** Le cœur (les trames des compteurs PZEM-004T v3 et PZEM-017, le bus qui les interroge, le message du nœud, les entrées analogiques et les règles de commutation : 388 777 vérifications dans 25 programmes de test, dont 375 036 sur les règles de commutation) est testé sur un ordinateur avec des compteurs et contacteurs factices, et les messages qu'il produit sont acceptés par ARMOR-COMMON. Le firmware du nœud (les réglages, la ligne série, les pages Compteurs et Mesures de son panneau, Bluetooth, mises à jour signées) se compile dans le conteneur ESP-IDF 5.5.5 pour les deux cartes. **Il n'a jamais tourné sur une carte, rien n'a été connecté à un compteur ni à un contacteur, et rien ici ne commute quoi que ce soit.**
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturité | Fonctionnel |
 | Rôle | Nœud de terrain électrique : compteurs, entrées et manœuvre (famille : Field Nodes, parent : ARMOR-COMMON) |
 | Technologie | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 388635 vérifications dans 24 programmes hôte et 6 contrôles Python (`ctest`) |
+| Tests | 388777 vérifications dans 25 programmes hôte et 6 contrôles Python (`ctest`) |
 | Équipements | Compteurs PZEM-004T v3 et PZEM-017 (jusqu'à 16), entrées analogiques, relais ; manœuvre désactivée par défaut |
 | Fonctionne sur | Une carte ESP32-S3 (Ethernet ou Wi-Fi) ; tests sur hôte sur n'importe quel ordinateur |
 | Sur matériel réel | Aucun pour l'instant : aucune carte montée ni compteur ou contacteur connecté ; rien ne commute quoi que ce soit |
@@ -58,7 +58,7 @@ Chaque ligne est une partie de ce dépôt et le feu dit où elle en est aujourd'
 | Domaine | État | Ce que cela veut dire ici |
 |---|---|---|
 | Logiciel | 🟢 | Le firmware compile dans le conteneur ESP-IDF 5.5.5 pour les deux cartes (Wi-Fi et Ethernet). |
-| Tests | 🟢 | 388 635 vérifications dans 24 programmes d'hôte réussissent (`ctest`), dont 375 036 sur les règles de manœuvre ; les compteurs et contacteurs sont des simulations. |
+| Tests | 🟢 | 388 777 vérifications dans 25 programmes d'hôte réussissent (`ctest`), dont 375 036 sur les règles de manœuvre ; les compteurs et contacteurs sont des simulations. |
 | Protocoles et données | 🟡 | Les trames et lectures des PZEM-004T v3 et PZEM-017 sont vérifiées par rapport aux trames documentées et à des échantillons enregistrés ; aucun compteur n'a encore répondu. |
 | Interface | 🟡 | Les pages des compteurs et des mesures du panneau web ont été essayées dans un navigateur contre un nœud simulé, pas sur une carte. |
 | Matériel | 🔴 | Aucune carte construite ni compteur ou contacteur connectés : rien n'a encore tourné sur de vrais équipements. |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-24 programmes de test sur hôte et 6 contrôles Python tournent sous `ctest` ; 388635 vérifications comptées par les programmes hôte, compilés avec `-Werror`.
+25 programmes de test sur hôte et 6 contrôles Python tournent sous `ctest` ; 388777 vérifications comptées par les programmes hôte, compilés avec `-Werror`.
 
 Contrôles Python : les textes du panneau en huit langues, les tâches, les chemins de sauvegarde, la session Bluetooth sous son verrou et les routes appelées par le panneau (et, dans certains nœuds, les codes HTTP ou les glyphes des polices)
 

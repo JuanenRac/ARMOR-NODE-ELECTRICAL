@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The log hook no longer takes 224 bytes of the stack of every task that logs:** the line is formatted into one static buffer shared by all the tasks (tried, never waited for, with a small buffer on the stack as the way out), so the tasks with 3 KiB of stack have room and the lines of the panel's log are cut at 383 characters instead of 223. The rule of what is kept is `core/log_line.hpp`, host-tested.
+
+- **A sign-in no longer holds the lock of the settings while the password is hashed:** the hash (10 000 rounds) is computed on a copy of the users, so the other tasks that read the settings do not wait for it (shared firmware).
+
 - **A watch on the Wi-Fi link by ping, off by default:** the build option `ARMOR_NET_LINK_WATCH` (menuconfig, A.R.M.O.R. node) makes the station ping its gateway every 20 s and force a fresh association after three rounds in a row without a single reply, for routers that leave the node "connected" but unreachable until it is reset by hand. One reply in a round is enough (a lost packet is not an outage). The rule is `core/link_watch.hpp`, covered by the new host program `tests/test_link_watch.cpp` (rounds with lost packets, the limit, the count cleared by an answer, a seeded long run); the shared file is kept equal in the five node projects.
 
 - **The stop bits of the meters' serial line can be set:** `bus.stop_bits` and `bus2.stop_bits` (1 or 2, 1 by default, written to the settings file only when 2) so a PZEM-017, whose sheet asks for two stop bits, can be read; the value is checked with the rest of the line and tests cover the range and the round trip. Reading a real meter that way is still to be checked on a bench.
