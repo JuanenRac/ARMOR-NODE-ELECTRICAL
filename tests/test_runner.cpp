@@ -378,7 +378,100 @@ static void test_the_settings_of_a_meter_reach_the_status() {
   CHECK(!never.meters()[0].settings_known && never.meters()[0].settings_ok == 0 && never.meters()[0].settings_bad == 0);
 }
 
+// ---- a power cut and a restart, row by row of the logic ------------------------------------------------------------------------------------
+
+// The mains go away for the whole line (every meter at once), then come back: the readings go, the node says why, and the first answers after the cut are read again.
+static void test_a_power_cut_on_the_whole_line() {
+  World world;
+  world.answers[1] = reply(1, kAc);
+  world.answers[2] = reply(2, kDc);
+  Runner runner(settings_with({{true, "grid", "", "ac", 1}, {true, "bus", "", "dc", 2}}));
+  runner.set_line_open();
+  run(runner, world, 6);
+  CHECK(runner.meters()[0].have_reading && runner.meters()[1].have_reading);
+  world.answers.clear();   // the meters lose their power together
+  run(runner, world, 20);
+  for (int i = 0; i < 2; ++i) CHECK(!runner.meters()[i].have_reading && runner.meters()[i].state == "silent" && runner.meters()[i].error == "silent");
+  CHECK(!contains(runner.message(), "\"id\":\"grid\"") && !contains(runner.message(), "\"id\":\"bus\""));
+  world.answers[1] = reply(1, kAc);
+  world.answers[2] = reply(2, kDc);
+  run(runner, world, 6);
+  CHECK(runner.meters()[0].state == "reading" && runner.meters()[1].state == "reading" && contains(runner.message(), "\"id\":\"grid\""));
+}
+
+// The node itself restarts: a new runner from the same settings knows nothing of the past (no reading is carried over), and reads again from the first turns.
+static void test_a_restart_forgets_the_readings_and_reads_again() {
+  World world;
+  world.answers[1] = reply(1, kAc);
+  const config::Settings s = settings_with({{true, "grid", "Red", "ac", 1}});
+  {
+    Runner before(s);
+    before.set_line_open();
+    run(before, world, 6);
+    CHECK(before.meters()[0].have_reading && before.meters()[0].replies_ok > 0);
+  }
+  Runner after(s);
+  CHECK(!after.meters()[0].have_reading && after.meters()[0].state == "waiting" && after.meters()[0].replies_ok == 0 && after.meters()[0].timeouts == 0 && after.bus().messages == 0);
+  after.set_line_open();
+  run(after, world, 6);
+  CHECK(after.meters()[0].state == "reading" && after.meters()[0].voltage_v == 230.5 && after.meters()[0].energy_kwh == 1.5);
+}
+
+// The cut comes in the middle of a reply: only the first bytes arrive. It is never read as a measurement, and the next whole reply is.
+static void test_a_cut_in_the_middle_of_a_reply() {
+  World world;
+  const std::vector<std::uint8_t> whole = reply(1, kAc);
+  world.answers[1] = std::vector<std::uint8_t>(whole.begin(), whole.begin() + 11);
+  Runner runner(settings_with({{true, "grid", "", "ac", 1}}));
+  runner.set_line_open();
+  run(runner, world, 10);
+  CHECK(!runner.meters()[0].have_reading && runner.meters()[0].replies_ok == 0 && !contains(runner.message(), "\"id\":\"grid\""));
+  CHECK(runner.meters()[0].state == "silent" || runner.meters()[0].state == "garbled");
+  world.answers[1] = whole;
+  run(runner, world, 10);
+  CHECK(runner.meters()[0].state == "reading" && runner.meters()[0].have_reading && runner.meters()[0].replies_ok >= 1 && runner.meters()[0].voltage_v == 230.5);
+}
+
+// The serial line itself goes away and comes back (the cable is pulled): nothing is read while it is down, and the meters are read again when it is up.
+static void test_the_line_goes_away_and_comes_back() {
+  World world;
+  world.answers[1] = reply(1, kAc);
+  Runner runner(settings_with({{true, "grid", "", "ac", 1}}));
+  runner.set_line_open();
+  run(runner, world, 6);
+  CHECK(runner.meters()[0].state == "reading");
+  world.fail_writes = true;
+  run(runner, world, 20);
+  CHECK(runner.write_failures() > 0 && !runner.meters()[0].have_reading);
+  world.fail_writes = false;
+  run(runner, world, 8);
+  CHECK(runner.meters()[0].state == "reading" && runner.meters()[0].have_reading);
+}
+
+// A noise burst before every reply (a line with a bad earth): the bytes that are not a whole frame are thrown away and the meter is still read.
+static void test_stray_bytes_before_a_reply() {
+  World world;
+  const std::vector<std::uint8_t> whole = reply(1, kAc);
+  std::vector<std::uint8_t> noisy = {0xFF, 0x00, 0x13};
+  noisy.insert(noisy.end(), whole.begin(), whole.end());
+  world.answers[1] = noisy;
+  Runner runner(settings_with({{true, "grid", "", "ac", 1}}));
+  runner.set_line_open();
+  run(runner, world, 12);
+  const MeterStatus& m = runner.meters()[0];
+  CHECK(m.replies_ok + m.replies_bad + static_cast<std::uint32_t>(m.timeouts) > 0);   // the line was used
+  CHECK(m.state == "reading" || m.state == "garbled" || m.state == "silent");   // whatever the engine decides about the stray bytes, it names the state
+  world.answers[1] = whole;
+  run(runner, world, 8);
+  CHECK(runner.meters()[0].state == "reading" && runner.meters()[0].have_reading);
+}
+
 int main() {
+  test_a_power_cut_on_the_whole_line();
+  test_a_restart_forgets_the_readings_and_reads_again();
+  test_a_cut_in_the_middle_of_a_reply();
+  test_the_line_goes_away_and_comes_back();
+  test_stray_bytes_before_a_reply();
   test_the_settings_of_a_meter_reach_the_status();
   test_long_periods_keep_the_readings();
   test_no_meter();
