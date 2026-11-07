@@ -12,6 +12,7 @@ namespace armor::uartbus {
 
 // Opens line 0 or 1, or returns nullptr with the reason in `error` ("driver", "pins", "baud", "mode"). A `de` pin of 0 or more turns the UART into RS485 half duplex with that
 // pin as the adapter's driver-enable (the UART raises it while it sends and the echo is not read back); -1 leaves the line plain TTL.
-std::unique_ptr<Line> open(int line, int rx, int tx, int de, int baud, std::string& error);
+// `stop_bits` is 1 or 2 (8N1 or 8N2: the PZEM-017 sheet asks for two).
+std::unique_ptr<Line> open(int line, int rx, int tx, int de, int baud, int stop_bits, std::string& error);
 
 }  // namespace armor::uartbus

@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The stop bits of the meters' serial line can be set:** `bus.stop_bits` and `bus2.stop_bits` (1 or 2, 1 by default, written to the settings file only when 2) so a PZEM-017, whose sheet asks for two stop bits, can be read; the value is checked with the rest of the line and tests cover the range and the round trip. Reading a real meter that way is still to be checked on a bench.
+
 - **A shim for the simulator's MQTT output:** `tests/mqtt_shim.cpp` is built from the same core files as the firmware (the PZEM Modbus decoder and the writer of the electrical message) and prints the messages the node would publish for the replies of the meters, so ARMOR-SIMULATOR can send them to a real broker and the server bench can check that the real server takes them. No board is involved and nothing here has run on one.
 
 ## [0.5.6] - Simulation bench: tests/simbench.cpp is built from the same core files as the firmware and is fed by ARMOR-SIMULATOR (python -m armorsimulator.nodebench --bus pzem) with the Modbus-RTU replies of the PZEM meters (flipped bits,... (and 1 more changes)

@@ -95,6 +95,13 @@ static void test_line() {
   s.bus.baud = 4801;
   CHECK(has(config::validate(s), "bus.baud", "range"));
   s.bus.baud = 115200;
+  s.bus.stop_bits = 3;
+  CHECK(has(config::validate(s), "bus.stop_bits", "range"));
+  s.bus.stop_bits = 2;
+  CHECK(!has(config::validate(s), "bus.stop_bits", "range"));
+  CHECK(config::to_json(s, true).find("\"stop_bits\":2") != std::string::npos);
+  s.bus.stop_bits = 1;
+  CHECK(config::to_json(s, true).find("stop_bits") == std::string::npos);
   CHECK(config::validate(s).empty());
   s.bus.poll_s = 0;
   CHECK(has(config::validate(s), "bus.poll_s", "range"));

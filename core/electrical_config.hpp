@@ -42,6 +42,7 @@ struct BusSetting {
   int tx = -1;        // the GPIO that sends to the meters' RX line
   int de = -1;        // the GPIO of an RS485 adapter's driver-enable (and receiver-enable) pins: the UART drives it high while it sends (half duplex); -1: none (TTL or an adapter that turns itself)
   int baud = 9600;
+  int stop_bits = 1;  // 1 (the PZEM-004T and most meters) or 2 (the PZEM-017 sheet says 8N2); the settings file only carries it when it is 2
   int poll_s = 2;     // seconds between two rounds of readings (the second line takes the first one's)
   // How often a meter that answers is asked for its own settings (its address and alarm thresholds, read only) to show whether they fit what the node uses: 0 never; at most a day.
   int check_settings_s = 600;   // (the second line takes the first one's)
@@ -119,6 +120,7 @@ inline void read_settings(const json::Value& document, Settings& s, Problems& pr
     read_int(*bus, "tx", s.bus.tx, -1, board::kLastGpio, "bus.tx", problems);
     read_int(*bus, "de", s.bus.de, -1, board::kLastGpio, "bus.de", problems);
     read_int(*bus, "baud", s.bus.baud, 1200, 115200, "bus.baud", problems);
+    read_int(*bus, "stop_bits", s.bus.stop_bits, 1, 2, "bus.stop_bits", problems);
     read_int(*bus, "poll_s", s.bus.poll_s, 1, 3600, "bus.poll_s", problems);
     read_int(*bus, "check_settings_s", s.bus.check_settings_s, 0, 86400, "bus.check_settings_s", problems);
   }
@@ -127,6 +129,7 @@ inline void read_settings(const json::Value& document, Settings& s, Problems& pr
     read_int(*bus2, "tx", s.bus2.tx, -1, board::kLastGpio, "bus2.tx", problems);
     read_int(*bus2, "de", s.bus2.de, -1, board::kLastGpio, "bus2.de", problems);
     read_int(*bus2, "baud", s.bus2.baud, 1200, 115200, "bus2.baud", problems);
+    read_int(*bus2, "stop_bits", s.bus2.stop_bits, 1, 2, "bus2.stop_bits", problems);
   }
   if (const json::Value* meters = document.get("meters"); meters != nullptr) {
     if (!meters->is_array() || meters->items.size() > kMeterCount) bad(problems, "meters", "invalid");
@@ -224,6 +227,7 @@ inline Problems validate(const Settings& s) {
       if (line.tx < 0) bad(problems, name + ".tx", "required"); else claim(line.tx, name, name + ".tx");
       if (line.de >= 0) claim(line.de, name, name + ".de");
       if (std::find(allowed_bauds().begin(), allowed_bauds().end(), line.baud) == allowed_bauds().end()) bad(problems, name + ".baud", "range");
+      if (line.stop_bits != 1 && line.stop_bits != 2) bad(problems, name + ".stop_bits", "range");
     }
   }
 
@@ -267,8 +271,12 @@ inline std::string to_json(const Settings& s, bool secrets) {
   json::Writer w;
   w.begin_object();
   node_write_head(w, s, secrets);
-  w.key("bus").begin_object().field("rx", s.bus.rx).field("tx", s.bus.tx).field("de", s.bus.de).field("baud", s.bus.baud).field("poll_s", s.bus.poll_s).field("check_settings_s", s.bus.check_settings_s).end_object();
-  w.key("bus2").begin_object().field("rx", s.bus2.rx).field("tx", s.bus2.tx).field("de", s.bus2.de).field("baud", s.bus2.baud).end_object();
+  w.key("bus").begin_object().field("rx", s.bus.rx).field("tx", s.bus.tx).field("de", s.bus.de).field("baud", s.bus.baud);
+  if (s.bus.stop_bits != 1) w.field("stop_bits", s.bus.stop_bits);
+  w.field("poll_s", s.bus.poll_s).field("check_settings_s", s.bus.check_settings_s).end_object();
+  w.key("bus2").begin_object().field("rx", s.bus2.rx).field("tx", s.bus2.tx).field("de", s.bus2.de).field("baud", s.bus2.baud);
+  if (s.bus2.stop_bits != 1) w.field("stop_bits", s.bus2.stop_bits);
+  w.end_object();
   w.key("meters").begin_array();
   for (const MeterSetting& meter : s.meters) {
     w.begin_object().field("enabled", meter.enabled).field("channel", meter.channel).field("label", meter.label).field("model", meter.model).field("address", meter.address).field("line", meter.line).end_object();

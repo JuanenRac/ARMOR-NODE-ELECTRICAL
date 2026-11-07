@@ -47,7 +47,7 @@ void copy_buses() { g_bus[0] = g_runner->bus(0); g_bus[1] = g_runner->bus(1); }
 void bus_task(void*) {
   std::string error;
   std::unique_ptr<uartbus::Line> line, second;
-  if (g_runner->line_in_use(0)) line = uartbus::open(0, g_settings.bus.rx, g_settings.bus.tx, g_settings.bus.de, g_settings.bus.baud, error);
+  if (g_runner->line_in_use(0)) line = uartbus::open(0, g_settings.bus.rx, g_settings.bus.tx, g_settings.bus.de, g_settings.bus.baud, g_settings.bus.stop_bits, error);
   else line = std::make_unique<NoLine>();
   if (!line) {
     ESP_LOGE(kTag, "the first serial line could not be opened (%s): its meters are not read", error.c_str());
@@ -55,7 +55,7 @@ void bus_task(void*) {
     line = std::make_unique<NoLine>();   // the other line and the analog inputs go on
   } else if (g_runner->line_in_use(0)) g_runner->set_line_open(0);
   if (g_runner->line_in_use(1)) {
-    second = uartbus::open(1, g_settings.bus2.rx, g_settings.bus2.tx, g_settings.bus2.de, g_settings.bus2.baud, error);
+    second = uartbus::open(1, g_settings.bus2.rx, g_settings.bus2.tx, g_settings.bus2.de, g_settings.bus2.baud, g_settings.bus2.stop_bits, error);
     if (!second) { ESP_LOGE(kTag, "the second serial line could not be opened (%s): its meters are not read", error.c_str()); g_runner->set_line_failed(error, 1); }
     else g_runner->set_line_open(1);
   }

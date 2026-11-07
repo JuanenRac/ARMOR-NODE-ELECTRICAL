@@ -17,12 +17,12 @@ class HardwareLine final : public Line {
   explicit HardwareLine(uart_port_t port) : kUart(port) {}
   ~HardwareLine() override { uart_driver_delete(kUart); }
 
-  bool start(int rx, int tx, int de, int baud, std::string& error) {
+  bool start(int rx, int tx, int de, int baud, int stop_bits, std::string& error) {
     uart_config_t config{};
     config.baud_rate = baud;
     config.data_bits = UART_DATA_8_BITS;
     config.parity = UART_PARITY_DISABLE;
-    config.stop_bits = UART_STOP_BITS_1;
+    config.stop_bits = stop_bits == 2 ? UART_STOP_BITS_2 : UART_STOP_BITS_1;
     config.flow_ctrl = UART_HW_FLOWCTRL_DISABLE;
     config.source_clk = UART_SCLK_DEFAULT;
     if (uart_driver_install(kUart, 1024, 0, 0, nullptr, 0) != ESP_OK) { error = "driver"; return false; }
@@ -48,10 +48,10 @@ class HardwareLine final : public Line {
 };
 }  // namespace
 
-std::unique_ptr<Line> open(int line_number, int rx, int tx, int de, int baud, std::string& error) {
+std::unique_ptr<Line> open(int line_number, int rx, int tx, int de, int baud, int stop_bits, std::string& error) {
   if (rx < 0 || tx < 0) { error = "pins"; return nullptr; }
   auto line = std::make_unique<HardwareLine>(port_of(line_number));
-  if (!line->start(rx, tx, de, baud, error)) return nullptr;
+  if (!line->start(rx, tx, de, baud, stop_bits, error)) return nullptr;
   return line;
 }
 
