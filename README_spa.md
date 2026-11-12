@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Lenguaje">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-389178%20checks-2ea44f.svg" alt="Pruebas">
+  <img src="https://img.shields.io/badge/Tests-390369%20checks-2ea44f.svg" alt="Pruebas">
   <img src="https://img.shields.io/badge/Version-0.5.6-0f6cbd.svg" alt="Versión">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Madurez">
 </p>
 
 ---
 
-**Comprobación de honestidad - qué funciona hoy:** El núcleo (las tramas de los medidores PZEM-004T v3 y PZEM-017, el bus que los pregunta, el mensaje del nodo, las entradas analógicas y las reglas de conmutación: 389.178 comprobaciones en 26 programas de test, 389.178 de ellas sobre las reglas de conmutación) se prueba en un ordenador con medidores y contactores de pega, y los mensajes que hace los acepta ARMOR-COMMON. El firmware del nodo (los ajustes, la línea serie, las páginas Medidores y Lecturas de su panel, Bluetooth, actualizaciones firmadas) compila en el contenedor ESP-IDF 5.5.5 para las dos placas. **Nunca ha corrido en una placa, no se ha conectado nada a un medidor ni a un contactor, y nada de aquí conmuta nada.**
+**Comprobación de honestidad - qué funciona hoy:** El núcleo (las tramas de los medidores PZEM-004T v3 y PZEM-017, el bus que los pregunta, el mensaje del nodo, las entradas analógicas y las reglas de conmutación: 390.369 comprobaciones en 28 programas de test, 375.039 de ellas sobre las reglas de conmutación) se prueba en un ordenador con medidores y contactores de pega, y los mensajes que hace los acepta ARMOR-COMMON. El firmware del nodo (los ajustes, la línea serie, las páginas Medidores y Lecturas de su panel, Bluetooth, actualizaciones firmadas) compila en el contenedor ESP-IDF 5.5.5 para las dos placas. **Nunca ha corrido en una placa, no se ha conectado nada a un medidor ni a un contactor, y nada de aquí conmuta nada.**
 
 ---
 
@@ -41,7 +41,7 @@
 | Madurez | Funcional |
 | Función | Nodo de campo eléctrico: medidores, entradas y maniobra (familia: Field Nodes, padre: ARMOR-COMMON) |
 | Tecnología | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Pruebas | 389178 comprobaciones en 26 programas de host y 6 de Python (`ctest`) |
+| Pruebas | 390369 comprobaciones en 28 programas de host y 6 de Python (`ctest`) |
 | Equipos | Medidores PZEM-004T v3 y PZEM-017 (hasta 16), entradas analógicas, relés; maniobra apagada por defecto |
 | Funciona en | Una placa ESP32-S3 (Ethernet o Wi-Fi); pruebas de host en cualquier ordenador |
 | En hardware real | Ninguno todavía: ninguna placa montada ni medidor o contactor conectado; nada conmuta nada |
@@ -58,7 +58,7 @@ Cada línea es una parte de este repositorio y la luz dice hasta dónde llega ho
 | Área | Estado | Qué significa aquí |
 |---|---|---|
 | Software | 🟢 | El firmware compila en el contenedor ESP-IDF 5.5.5 para las dos placas (Wi-Fi y Ethernet). |
-| Pruebas | 🟢 | Pasan 389.178 comprobaciones en 26 programas de host (`ctest`), 389.178 de ellas sobre las reglas de maniobra; los medidores y contactores son simulaciones. |
+| Pruebas | 🟢 | Pasan 390.369 comprobaciones en 28 programas de host (`ctest`), 375.039 de ellas sobre las reglas de maniobra; los medidores y contactores son simulaciones. |
 | Protocolos y datos | 🟡 | Las tramas y lecturas de los PZEM-004T v3 y PZEM-017 se comprueban contra las tramas documentadas y muestras grabadas; ningún medidor ha respondido todavía. |
 | Interfaz | 🟡 | Las páginas de medidores y lecturas del panel web se han ejercitado en un navegador contra un nodo simulado, no en una placa. |
 | Hardware | 🔴 | Ninguna placa construida ni medidor o contactor conectados: nada ha funcionado todavía con equipos reales. |
@@ -202,13 +202,13 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-26 programas de prueba de host y 6 comprobaciones en Python se ejecutan con `ctest`; 389178 comprobaciones contadas por los programas de host, compilados con `-Werror`.
+28 programas de prueba de host y 6 comprobaciones en Python se ejecutan con `ctest`; 390369 comprobaciones contadas por los programas de host, compilados con `-Werror`.
 
 Comprobaciones Python: los textos del panel en ocho idiomas, las tareas, las rutas de guardado, la sesión Bluetooth bajo su bloqueo y las rutas que llama el panel (y, en algunos nodos, los códigos HTTP o los glifos de las fuentes)
 
 Las pruebas de host necesitan cualquier compilador C++17 (Linux, WSL, MSYS2); el panel web también se ejercita en un navegador real contra un nodo de pruebas (`tools/panel_mock.mjs`, `tools/panel_browser_test.mjs`).
 
-La mayoría de las comprobaciones son barridos exhaustivos de las reglas de maniobra (`test_switch_set` y `test_interlock`: 389 178); los medidores y contactores son sustitutos. `test_clock` solo imprime `ok`.
+La mayoría de las comprobaciones son barridos exhaustivos de las reglas de maniobra (`test_switch_set` y `test_interlock`: 375 039); los medidores y contactores son sustitutos. `test_clock` solo imprime `ok`.
 
 ## 🏗️ Compilación y publicación
 

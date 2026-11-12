@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The readers and writers of the messages are tried with every member of their contract:** a new test program (`test_wire_full`, shared with the other nodes) reads and writes back, for every message, documents that hold every member the schema declares and documents that leave out about half of the optional ones, and feeds the decoder of the text patterns text that is not UTF-8; a new test program (`test_cover_edges`) tries the lines of the meters that are not in use, the names of values that no rule produces, a command whose every field is wrong in turn, a switch that is refused, a token of the wrong size and a source of random bytes that fails; the branch coverage of the generated reader and writer goes from 79 % to 88 %, the floor goes from 97.9 % of the lines and 87.8 % of the branches to 99.0 % and 91.4 % (measured 99.3 % and 91.7 %).
+
 - **More of the shared rules are tried:** the shared test program covers the diagnostic package, the release signature text, the topics and the Bluetooth frames branch by branch; the floor of the branch coverage goes from 86.9 % to 87.8 % (measured 88.3 %).
 
 - **A floor for the test coverage of `core/`:** the workflow `coverage-floor.yml` builds the host tests with gcov counters, runs them and fails when the lines or the branches they execute fall below `docs/coverage_threshold.json` (floor: lines 97.5, branches 86.9; measured 98.0 and 87.4). Raising it is a change of that file with a figure measured by a run of the workflow.
