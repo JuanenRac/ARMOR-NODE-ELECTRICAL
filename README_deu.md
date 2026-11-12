@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Sprache">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-389007%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-389178%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.6-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Reifegrad">
 </p>
 
 ---
 
-**Ehrlichkeitsprüfung - was heute läuft:** Der Kern (die Rahmen der Zähler PZEM-004T v3 und PZEM-017, der Bus, der sie abfragt, die Nachricht des Knotens, die analogen Eingänge und die Schaltregeln: 388.777 Prüfungen in 26 Testprogrammen, davon 375.036 zu den Schaltregeln) wird auf einem Computer mit Ersatzzählern und -schützen getestet, und die von ihm erzeugten Nachrichten akzeptiert ARMOR-COMMON. Die Firmware des Knotens (die Einstellungen, die serielle Leitung, die Seiten Zähler und Messwerte seines Panels, Bluetooth, signierte Updates) baut im ESP-IDF-5.5.5-Container für beide Platinen. **Sie lief nie auf einer Platine, an keinen Zähler und kein Schütz wurde etwas angeschlossen, und nichts hier schaltet irgendetwas.**
+**Ehrlichkeitsprüfung - was heute läuft:** Der Kern (die Rahmen der Zähler PZEM-004T v3 und PZEM-017, der Bus, der sie abfragt, die Nachricht des Knotens, die analogen Eingänge und die Schaltregeln: 389.178 Prüfungen in 26 Testprogrammen, davon 389.178 zu den Schaltregeln) wird auf einem Computer mit Ersatzzählern und -schützen getestet, und die von ihm erzeugten Nachrichten akzeptiert ARMOR-COMMON. Die Firmware des Knotens (die Einstellungen, die serielle Leitung, die Seiten Zähler und Messwerte seines Panels, Bluetooth, signierte Updates) baut im ESP-IDF-5.5.5-Container für beide Platinen. **Sie lief nie auf einer Platine, an keinen Zähler und kein Schütz wurde etwas angeschlossen, und nichts hier schaltet irgendetwas.**
 
 ---
 
@@ -41,7 +41,7 @@
 | Reifegrad | Funktionsfähig |
 | Rolle | Elektro-Feldknoten: Zähler, Eingänge und Schalten (Familie: Field Nodes, übergeordnet: ARMOR-COMMON) |
 | Technik | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 389007 Prüfungen in 26 Host-Programmen und 6 Python-Prüfungen (`ctest`) |
+| Tests | 389178 Prüfungen in 26 Host-Programmen und 6 Python-Prüfungen (`ctest`) |
 | Geräte | Zähler PZEM-004T v3 und PZEM-017 (bis zu 16), analoge Eingänge, Relais; Schalten standardmäßig aus |
 | Läuft auf | Eine ESP32-S3-Platine (Ethernet oder WLAN); Host-Tests auf jedem Computer |
 | Auf echter Hardware | Noch keiner: keine Platine aufgebaut und kein Zähler oder Schütz angeschlossen; nichts schaltet irgendetwas |
@@ -58,7 +58,7 @@ Jede Zeile ist ein Teil dieses Repositorys, und die Ampel sagt, wie weit er heut
 | Bereich | Stand | Was das hier bedeutet |
 |---|---|---|
 | Software | 🟢 | Die Firmware wird im ESP-IDF-5.5.5-Container für beide Platinen (WLAN und Ethernet) gebaut. |
-| Tests | 🟢 | 388.777 Prüfungen in 26 Host-Programmen bestehen (`ctest`), davon 375.036 zu den Schaltregeln; die Zähler und Schütze sind Nachbildungen. |
+| Tests | 🟢 | 389.178 Prüfungen in 26 Host-Programmen bestehen (`ctest`), davon 389.178 zu den Schaltregeln; die Zähler und Schütze sind Nachbildungen. |
 | Protokolle und Daten | 🟡 | Die Telegramme und Messwerte der PZEM-004T v3 und PZEM-017 werden gegen die dokumentierten Telegramme und aufgezeichnete Beispiele geprüft; noch hat kein Zähler geantwortet. |
 | Oberfläche | 🟡 | Die Seiten für Zähler und Messwerte des Web-Panels wurden in einem Browser gegen einen nachgebildeten Knoten erprobt, nicht auf einer Platine. |
 | Hardware | 🔴 | Keine Platine gebaut und kein Zähler oder Schütz angeschlossen: Bisher lief nichts auf echten Geräten. |
@@ -202,13 +202,13 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-26 Host-Testprogramme und 6 Python-Prüfungen laufen unter `ctest`; 389007 Prüfungen, gezählt von den Host-Programmen, mit `-Werror` gebaut.
+26 Host-Testprogramme und 6 Python-Prüfungen laufen unter `ctest`; 389178 Prüfungen, gezählt von den Host-Programmen, mit `-Werror` gebaut.
 
 Python-Prüfungen: die Panel-Texte in acht Sprachen, die Tasks, die Speicherpfade, die Bluetooth-Sitzung unter ihrer Sperre und die vom Panel aufgerufenen Routen (und in manchen Knoten die HTTP-Codes oder die Glyphen der Schriften)
 
 Die Host-Tests brauchen einen beliebigen C++17-Compiler (Linux, WSL, MSYS2); das Web-Panel wird außerdem in einem echten Browser gegen einen Ersatzknoten geprüft (`tools/panel_mock.mjs`, `tools/panel_browser_test.mjs`).
 
-Die meisten Prüfungen sind erschöpfende Durchläufe der Schaltregeln (`test_switch_set` und `test_interlock`: 375 036); Zähler und Schütze sind Ersatz. `test_clock` gibt nur `ok` aus.
+Die meisten Prüfungen sind erschöpfende Durchläufe der Schaltregeln (`test_switch_set` und `test_interlock`: 389 178); Zähler und Schütze sind Ersatz. `test_clock` gibt nur `ok` aus.
 
 ## 🏗️ Build und Veröffentlichung
 
