@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Sprache">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-390369%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-390452%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.7-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Reifegrad">
 </p>
@@ -41,7 +41,7 @@
 | Reifegrad | Funktionsfähig |
 | Rolle | Elektro-Feldknoten: Zähler, Eingänge und Schalten (Familie: Field Nodes, übergeordnet: ARMOR-COMMON) |
 | Technik | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 390369 Prüfungen in 28 Host-Programmen und 6 Python-Prüfungen (`ctest`) |
+| Tests | 390452 Prüfungen in 28 Host-Programmen und 6 Python-Prüfungen (`ctest`) |
 | Geräte | Zähler PZEM-004T v3 und PZEM-017 (bis zu 16), analoge Eingänge, Relais; Schalten standardmäßig aus |
 | Läuft auf | Eine ESP32-S3-Platine (Ethernet oder WLAN); Host-Tests auf jedem Computer |
 | Auf echter Hardware | Noch keiner: keine Platine aufgebaut und kein Zähler oder Schütz angeschlossen; nichts schaltet irgendetwas |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-28 Host-Testprogramme und 6 Python-Prüfungen laufen unter `ctest`; 390369 Prüfungen, gezählt von den Host-Programmen, mit `-Werror` gebaut.
+28 Host-Testprogramme und 6 Python-Prüfungen laufen unter `ctest`; 390452 Prüfungen, gezählt von den Host-Programmen, mit `-Werror` gebaut.
 
 Python-Prüfungen: die Panel-Texte in acht Sprachen, die Tasks, die Speicherpfade, die Bluetooth-Sitzung unter ihrer Sperre und die vom Panel aufgerufenen Routen (und in manchen Knoten die HTTP-Codes oder die Glyphen der Schriften)
 
