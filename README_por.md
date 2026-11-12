@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Language">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-390797%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-474926%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.7-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
@@ -41,7 +41,7 @@
 | Maturidade | Funcional |
 | Função | Nó de campo elétrico: contadores, entradas e manobra (família: Field Nodes, pai: ARMOR-COMMON) |
 | Tecnologia | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Testes | 390797 verificações em 28 programas de anfitrião e 6 em Python (`ctest`) |
+| Testes | 474926 verificações em 28 programas de anfitrião e 6 em Python (`ctest`) |
 | Equipamentos | Contadores PZEM-004T v3 e PZEM-017 (até 16), entradas analógicas, relés; manobra desligada por omissão |
 | Funciona em | Uma placa ESP32-S3 (Ethernet ou Wi-Fi); testes de anfitrião em qualquer computador |
 | Em hardware real | Nenhum ainda: nenhuma placa montada nem contador ou contactor ligados; nada comuta coisa alguma |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-28 programas de teste de anfitrião e 6 verificações Python correm com `ctest`; 390797 verificações contadas pelos programas de anfitrião, compiladas com `-Werror`.
+28 programas de teste de anfitrião e 6 verificações Python correm com `ctest`; 474926 verificações contadas pelos programas de anfitrião, compiladas com `-Werror`.
 
 Verificações Python: os textos do painel em oito línguas, as tarefas, os caminhos de gravação, a sessão Bluetooth sob o seu bloqueio e as rotas que o painel chama (e, em alguns nós, os códigos HTTP ou os glifos dos tipos de letra)
 
