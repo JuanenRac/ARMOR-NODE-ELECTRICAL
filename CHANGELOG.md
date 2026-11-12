@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared wire header knows the field `challenge` of the voice turn result:** the generated `core/armor_wire.hpp` (copied from ARMOR-COMMON) describes the optional number of two to six digits that the voice service sends in the mode `challenge` of its silence confirmation. This node does not use it; the copy only follows the contract.
+
 - **The log hook no longer takes 224 bytes of the stack of every task that logs:** the line is formatted into one static buffer shared by all the tasks (tried, never waited for, with a small buffer on the stack as the way out), so the tasks with 3 KiB of stack have room and the lines of the panel's log are cut at 383 characters instead of 223. The rule of what is kept is `core/log_line.hpp`, host-tested.
 
 - **A sign-in no longer holds the lock of the settings while the password is hashed:** the hash (10 000 rounds) is computed on a copy of the users, so the other tasks that read the settings do not wait for it (shared firmware).
