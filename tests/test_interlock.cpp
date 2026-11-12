@@ -238,12 +238,45 @@ static void test_random() {
   }
 }
 
+// The power goes at random moments: every coil drops at once, the contactors fall open after their own delay, and a controller that knows nothing starts again when the power is back. Whatever
+// the cut did, nothing is energised by the new controller until somebody arms it and asks, and the two sources are never closed together on the way.
+static void test_random_power_cuts() {
+  Random random(4242);
+  int cuts = 0, closed_cuts = 0;
+  for (int run = 0; run < 150; ++run) {
+    Plant plant;
+    plant.run(100);
+    for (int step = 0; step < 400; ++step) {
+      if (random.chance(20)) plant.controller.arm(plant.now);
+      if (random.chance(15)) plant.controller.request(static_cast<Source>(random.next() % 3), plant.now);
+      plant.run(10);
+      CHECK(!plant.controller.coils().a || !plant.controller.coils().b);
+      if (!random.chance(8)) continue;
+      ++cuts;
+      if (plant.controller.selected() != Source::kNone) ++closed_cuts;
+      const std::uint64_t outage_ms = 10 + random.next() % 3000;
+      for (std::uint64_t end = plant.now + outage_ms; plant.now < end; plant.now += 10) { plant.a.step(false, plant.now); plant.b.step(false, plant.now); }   // no power: no coil
+      plant.controller = TransferController(TransferConfig{true, 2000, 1000, 10'000});
+      plant.controller.tick(plant.feedback(), plant.now);
+      const Coils first = plant.controller.coils();
+      CHECK(!first.a && !first.b);                                                  // a fresh controller energises nothing by itself
+      CHECK(plant.controller.selected() == Source::kNone && plant.controller.wanted() == Source::kNone);
+      CHECK(!plant.controller.armed(plant.now));                                    // an arm from before the cut is gone with it
+      plant.run(5000);                                                              // however long the wait: still nothing without an arm and a request
+      CHECK(!plant.controller.coils().a && !plant.controller.coils().b);
+      CHECK(plant.controller.request(Source::kA, plant.now) == Refusal::kNotArmed);   // a request that was not armed after the cut is refused
+    }
+  }
+  CHECK(cuts > 1000 && closed_cuts > 50);
+}
+
 int main() {
   test_disabled();
   test_arming();
   test_transfer();
   test_faults();
   test_random();
+  test_random_power_cuts();
   std::printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
 }
