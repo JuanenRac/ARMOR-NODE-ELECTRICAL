@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Language">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-388777%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-389007%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.6-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**诚实性检查 - 今天真正能运行的部分：** 核心（PZEM-004T v3 和 PZEM-017 电表的帧、轮询它们的总线、节点的消息、模拟输入和切换规则：25 个测试程序中的 388,777 项检查，其中 375,036 项针对切换规则）在计算机上用替身电表和接触器测试，它生成的消息被 ARMOR-COMMON 接受。节点固件（设置、串行线路、面板的电表和读数页面、蓝牙、签名更新）可在 ESP-IDF 5.5.5 容器中为两种板子构建。**它从未在板上运行，没有连接任何电表或接触器，这里的任何东西都不会切换任何设备。**
+**诚实性检查 - 今天真正能运行的部分：** 核心（PZEM-004T v3 和 PZEM-017 电表的帧、轮询它们的总线、节点的消息、模拟输入和切换规则：26 个测试程序中的 389,007 项检查，其中 375,036 项针对切换规则）在计算机上用替身电表和接触器测试，它生成的消息被 ARMOR-COMMON 接受。节点固件（设置、串行线路、面板的电表和读数页面、蓝牙、签名更新）可在 ESP-IDF 5.5.5 容器中为两种板子构建。**它从未在板上运行，没有连接任何电表或接触器，这里的任何东西都不会切换任何设备。**
 
 ---
 
@@ -41,7 +41,7 @@
 | 成熟度 | 可用 |
 | 角色 | 电气现场节点：电表、输入和开关操作（家族：Field Nodes，上级：ARMOR-COMMON） |
 | 技术栈 | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| 测试 | 388777 项检查（25 个主机程序和 6 项 Python 检查，`ctest`） |
+| 测试 | 389007 项检查（26 个主机程序和 6 项 Python 检查，`ctest`） |
 | 设备 | PZEM-004T v3 和 PZEM-017 电表（最多 16 台）、模拟输入、继电器；开关操作默认关闭 |
 | 运行位置 | ESP32-S3 电路板（以太网或 Wi-Fi）；主机测试可在任何计算机上运行 |
 | 真实硬件 | 暂无：没有制作板子，也没有连接电表或接触器；不会切换任何设备 |
@@ -58,7 +58,7 @@
 | 领域 | 状态 | 在这里的含义 |
 |---|---|---|
 | 软件 | 🟢 | 固件可在 ESP-IDF 5.5.5 容器中为两块板（Wi-Fi 和以太网）构建。 |
-| 测试 | 🟢 | 25 个主机程序中的 388,777 项检查通过（`ctest`），其中 375,036 项针对切换规则；电表和接触器均为模拟。 |
+| 测试 | 🟢 | 26 个主机程序中的 389,007 项检查通过（`ctest`），其中 375,036 项针对切换规则；电表和接触器均为模拟。 |
 | 协议与数据 | 🟡 | PZEM-004T v3 和 PZEM-017 的帧与读数已对照文档中的帧和录制的样本检查；目前还没有电表响应过。 |
 | 界面 | 🟡 | 网页面板的电表和读数页面已在浏览器中对模拟节点测试过，尚未在板子上测试。 |
 | 硬件 | 🔴 | 尚未制作板子，也没有连接电表或接触器：还没有在真实设备上运行过。 |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-`ctest` 运行 25 个主机测试程序和 6 个 Python 检查；主机程序统计的检查共 388777 项，使用 `-Werror` 构建。
+`ctest` 运行 26 个主机测试程序和 6 个 Python 检查；主机程序统计的检查共 389007 项，使用 `-Werror` 构建。
 
 Python 检查：八种语言的面板文字、任务、保存路径、受锁保护的蓝牙会话以及面板调用的路由（部分节点还包括 HTTP 状态码或字体字形）
 

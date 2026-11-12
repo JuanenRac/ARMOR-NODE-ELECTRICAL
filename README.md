@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Language">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-388777%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-389007%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.6-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**Honesty check - what runs today:** The core (the frames of the PZEM-004T v3 and PZEM-017 meters, the bus that asks them, the message of the node, the analogue inputs and the rules for switching: 388,777 checks in 25 test programs, 375,036 of them on the switching rules) is tested on a computer with stand-in meters and contactors, and the messages it makes are accepted by ARMOR-COMMON. The firmware of the node (the settings, the serial line, the Meters and Readings pages of its panel, Bluetooth, signed updates) builds in the ESP-IDF 5.5.5 container for both boards. **It has never run on a board, nothing has been connected to a meter or a contactor, and nothing here switches anything.**
+**Honesty check - what runs today:** The core (the frames of the PZEM-004T v3 and PZEM-017 meters, the bus that asks them, the message of the node, the analogue inputs and the rules for switching: 389,007 checks in 26 test programs, 375,036 of them on the switching rules) is tested on a computer with stand-in meters and contactors, and the messages it makes are accepted by ARMOR-COMMON. The firmware of the node (the settings, the serial line, the Meters and Readings pages of its panel, Bluetooth, signed updates) builds in the ESP-IDF 5.5.5 container for both boards. **It has never run on a board, nothing has been connected to a meter or a contactor, and nothing here switches anything.**
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturity | Functional |
 | Role | Electrical field node: meters, inputs and switching (family: Field Nodes, parent: ARMOR-COMMON) |
 | Stack | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 388777 checks in 25 host programs and 6 Python checks (`ctest`) |
+| Tests | 389007 checks in 26 host programs and 6 Python checks (`ctest`) |
 | Equipment | PZEM-004T v3 and PZEM-017 meters (up to 16), analogue inputs, relays; switching off by default |
 | Runs on | An ESP32-S3 board (Ethernet or Wi-Fi); host tests on any computer |
 | On real hardware | None yet: no board built and no meter or contactor connected; nothing switches anything |
@@ -58,7 +58,7 @@ Each line is one part of this repository and the light says how far it is today.
 | Area | State | What it means here |
 |---|---|---|
 | Software | 🟢 | The firmware builds in the ESP-IDF 5.5.5 container for both boards (Wi-Fi and Ethernet). |
-| Tests | 🟢 | 388,777 checks in 25 host programs pass (`ctest`), 375,036 of them on the switching rules; the meters and contactors are stand-ins. |
+| Tests | 🟢 | 389,007 checks in 26 host programs pass (`ctest`), 375,036 of them on the switching rules; the meters and contactors are stand-ins. |
 | Protocols and data | 🟡 | The PZEM-004T v3 and PZEM-017 frames and readings are checked against the documented frames and recorded samples; no meter has answered yet. |
 | Interface | 🟡 | The Meters and Readings pages of the web panel are exercised in a browser against a stand-in node, not on a board. |
 | Hardware | 🔴 | No board built and no meter or contactor connected: nothing has run on real equipment yet. |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-25 host test programs and 6 Python checks run under `ctest`; 388777 checks counted by the host programs, built with `-Werror`.
+26 host test programs and 6 Python checks run under `ctest`; 389007 checks counted by the host programs, built with `-Werror`.
 
 Python checks: the panel texts in eight languages, the tasks, the save paths, the Bluetooth session under its lock and the routes the panel calls (and, in some nodes, the HTTP codes or the glyphs of the fonts)
 
