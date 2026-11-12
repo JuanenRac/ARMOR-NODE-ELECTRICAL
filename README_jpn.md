@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Language">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-474926%20checks-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-476364%20checks-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.5.7-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
@@ -41,7 +41,7 @@
 | 成熟度 | 機能する |
 | 役割 | 電気フィールドノード：メーター、入力、開閉（ファミリー：Field Nodes、親：ARMOR-COMMON） |
 | 技術 | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| テスト | 474926 件の検査（ホスト用プログラム 28 本と Python 検査 6 個、`ctest`） |
+| テスト | 476364 件の検査（ホスト用プログラム 28 本と Python 検査 6 個、`ctest`） |
 | 機器 | PZEM-004T v3 と PZEM-017 のメーター（最大 16）、アナログ入力、リレー。開閉は初期でオフ |
 | 動作環境 | ESP32-S3 基板（Ethernet または Wi-Fi）、ホストテストは任意のコンピューター |
 | 実機での確認 | まだありません：基板は未製作で、メーターも接触器も未接続。何も切り替えません |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-ホスト用テストプログラム 28 個と Python の検査 5 個を `ctest` で実行します。ホストのプログラムが数えた検査は 474926 件で、`-Werror` でビルドします。
+ホスト用テストプログラム 28 個と Python の検査 5 個を `ctest` で実行します。ホストのプログラムが数えた検査は 476364 件で、`-Werror` でビルドします。
 
 Python の検査：8 言語のパネル文言、タスク、保存パス、ロック下の Bluetooth セッション、パネルが呼ぶルート（ノードによっては HTTP コードやフォントのグリフも）
 
