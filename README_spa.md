@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Lenguaje">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-390452%20checks-2ea44f.svg" alt="Pruebas">
+  <img src="https://img.shields.io/badge/Tests-390797%20checks-2ea44f.svg" alt="Pruebas">
   <img src="https://img.shields.io/badge/Version-0.5.7-0f6cbd.svg" alt="Versión">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Madurez">
 </p>
@@ -41,7 +41,7 @@
 | Madurez | Funcional |
 | Función | Nodo de campo eléctrico: medidores, entradas y maniobra (familia: Field Nodes, padre: ARMOR-COMMON) |
 | Tecnología | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Pruebas | 390452 comprobaciones en 28 programas de host y 6 de Python (`ctest`) |
+| Pruebas | 390797 comprobaciones en 28 programas de host y 6 de Python (`ctest`) |
 | Equipos | Medidores PZEM-004T v3 y PZEM-017 (hasta 16), entradas analógicas, relés; maniobra apagada por defecto |
 | Funciona en | Una placa ESP32-S3 (Ethernet o Wi-Fi); pruebas de host en cualquier ordenador |
 | En hardware real | Ninguno todavía: ninguna placa montada ni medidor o contactor conectado; nada conmuta nada |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-28 programas de prueba de host y 6 comprobaciones en Python se ejecutan con `ctest`; 390452 comprobaciones contadas por los programas de host, compilados con `-Werror`.
+28 programas de prueba de host y 6 comprobaciones en Python se ejecutan con `ctest`; 390797 comprobaciones contadas por los programas de host, compilados con `-Werror`.
 
 Comprobaciones Python: los textos del panel en ocho idiomas, las tareas, las rutas de guardado, la sesión Bluetooth bajo su bloqueo y las rutas que llama el panel (y, en algunos nodos, los códigos HTTP o los glifos de las fuentes)
 
