@@ -41,7 +41,7 @@
 | Maturité | Fonctionnel |
 | Rôle | Nœud de terrain électrique : compteurs, entrées et manœuvre (famille : Field Nodes, parent : ARMOR-COMMON) |
 | Technologie | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 476364 vérifications dans 28 programmes hôte et 6 contrôles Python (`ctest`) |
+| Tests | 476364 vérifications dans 28 programmes hôte et 7 contrôles Python (`ctest`) |
 | Équipements | Compteurs PZEM-004T v3 et PZEM-017 (jusqu'à 16), entrées analogiques, relais ; manœuvre désactivée par défaut |
 | Fonctionne sur | Une carte ESP32-S3 (Ethernet ou Wi-Fi) ; tests sur hôte sur n'importe quel ordinateur |
 | Sur matériel réel | Aucun pour l'instant : aucune carte montée ni compteur ou contacteur connecté ; rien ne commute quoi que ce soit |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-28 programmes de test sur hôte et 6 contrôles Python tournent sous `ctest` ; 476364 vérifications comptées par les programmes hôte, compilés avec `-Werror`.
+28 programmes de test sur hôte et 7 contrôles Python tournent sous `ctest` ; 476364 vérifications comptées par les programmes hôte, compilés avec `-Werror`.
 
 Contrôles Python : les textes du panneau en huit langues, les tâches, les chemins de sauvegarde, la session Bluetooth sous son verrou et les routes appelées par le panneau (et, dans certains nœuds, les codes HTTP ou les glyphes des polices)
 

@@ -41,7 +41,7 @@
 | Maturidade | Funcional |
 | Função | Nó de campo elétrico: contadores, entradas e manobra (família: Field Nodes, pai: ARMOR-COMMON) |
 | Tecnologia | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Testes | 476364 verificações em 28 programas de anfitrião e 6 em Python (`ctest`) |
+| Testes | 476364 verificações em 28 programas de anfitrião e 7 em Python (`ctest`) |
 | Equipamentos | Contadores PZEM-004T v3 e PZEM-017 (até 16), entradas analógicas, relés; manobra desligada por omissão |
 | Funciona em | Uma placa ESP32-S3 (Ethernet ou Wi-Fi); testes de anfitrião em qualquer computador |
 | Em hardware real | Nenhum ainda: nenhuma placa montada nem contador ou contactor ligados; nada comuta coisa alguma |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-28 programas de teste de anfitrião e 6 verificações Python correm com `ctest`; 476364 verificações contadas pelos programas de anfitrião, compiladas com `-Werror`.
+28 programas de teste de anfitrião e 7 verificações Python correm com `ctest`; 476364 verificações contadas pelos programas de anfitrião, compiladas com `-Werror`.
 
 Verificações Python: os textos do painel em oito línguas, as tarefas, os caminhos de gravação, a sessão Bluetooth sob o seu bloqueio e as rotas que o painel chama (e, em alguns nós, os códigos HTTP ou os glifos dos tipos de letra)
 
