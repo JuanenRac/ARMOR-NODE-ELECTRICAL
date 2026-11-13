@@ -23,6 +23,7 @@
 #include "adc_stream.hpp"
 #include "base_board.hpp"
 #include "board_s3.hpp"
+#include "command_sig.hpp"
 #include "config_common.hpp"
 #include "io_config.hpp"
 #include "node_settings.hpp"
@@ -85,6 +86,7 @@ struct Settings : NodeSettings, IoSettings {   // what every node has (core/node
   std::array<MeterSetting, kMeterCount> meters;
   std::array<AnalogSetting, board::kAnalogCount> analogs;
   adcstream::StreamSettings analog_stream;   // how the inputs are read: one sample at a time (the default), or as a stream filled by the converter itself
+  std::string command_key;   // 64 hexadecimal digits, the `command_key` of GET /api/v1/admin/nodes/{id}/token of the server (while its option commands.require_sig is on): with a key here the node takes only commands the server signed; empty: any command of the contract, as before; a secret, never shown again
 };
 
 // The speeds the line may use.
@@ -115,6 +117,7 @@ inline void read_settings(const json::Value& document, Settings& s, Problems& pr
   using namespace detail;
   if (!document.is_object()) { bad(problems, "", "invalid"); return; }
   node_read(document, s, problems);
+  read_secret(document, "command_key", s.command_key, "command_key", problems);
   if (const json::Value* bus = document.get("bus"); bus != nullptr && bus->is_object()) {
     read_int(*bus, "rx", s.bus.rx, -1, board::kLastGpio, "bus.rx", problems);
     read_int(*bus, "tx", s.bus.tx, -1, board::kLastGpio, "bus.tx", problems);
@@ -258,6 +261,7 @@ inline Problems validate(const Settings& s) {
     if (input.mode == "ac" && input.cal_offset_mv != 0.0) bad(problems, base + "cal_offset_mv", "invalid");   // an alternating signal has no offset to correct
   }
   if (const char* member = adcstream::check(s.analog_stream); member[0] != 0) bad(problems, std::string("analog_stream.") + member, "range");
+  if (!s.command_key.empty() && !command_sig::key_is_valid(s.command_key)) bad(problems, "command_key", "invalid");
   std::size_t meter_count = 0;
   for (const MeterSetting& meter : s.meters) if (meter.enabled) ++meter_count;
   if (meter_count + analog_count > kMaxChannels) bad(problems, "analogs", "too_many");
@@ -271,6 +275,7 @@ inline std::string to_json(const Settings& s, bool secrets) {
   json::Writer w;
   w.begin_object();
   node_write_head(w, s, secrets);
+  if (secrets) w.field("command_key", s.command_key); else w.field("command_key_set", !s.command_key.empty());
   w.key("bus").begin_object().field("rx", s.bus.rx).field("tx", s.bus.tx).field("de", s.bus.de).field("baud", s.bus.baud);
   if (s.bus.stop_bits != 1) w.field("stop_bits", s.bus.stop_bits);
   w.field("poll_s", s.bus.poll_s).field("check_settings_s", s.bus.check_settings_s).end_object();
