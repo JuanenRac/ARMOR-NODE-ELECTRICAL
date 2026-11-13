@@ -41,7 +41,7 @@
 | Maturity | Functional |
 | Role | Electrical field node: meters, inputs and switching (family: Field Nodes, parent: ARMOR-COMMON) |
 | Stack | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 476364 checks in 28 host programs and 6 Python checks (`ctest`) |
+| Tests | 476364 checks in 28 host programs and 7 Python checks (`ctest`) |
 | Equipment | PZEM-004T v3 and PZEM-017 meters (up to 16), analogue inputs, relays; switching off by default |
 | Runs on | An ESP32-S3 board (Ethernet or Wi-Fi); host tests on any computer |
 | On real hardware | None yet: no board built and no meter or contactor connected; nothing switches anything |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-28 host test programs and 6 Python checks run under `ctest`; 476364 checks counted by the host programs, built with `-Werror`.
+28 host test programs and 7 Python checks run under `ctest`; 476364 checks counted by the host programs, built with `-Werror`.
 
 Python checks: the panel texts in eight languages, the tasks, the save paths, the Bluetooth session under its lock and the routes the panel calls (and, in some nodes, the HTTP codes or the glyphs of the fonts)
 

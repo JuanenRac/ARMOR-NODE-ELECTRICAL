@@ -41,7 +41,7 @@
 | Reifegrad | Funktionsfähig |
 | Rolle | Elektro-Feldknoten: Zähler, Eingänge und Schalten (Familie: Field Nodes, übergeordnet: ARMOR-COMMON) |
 | Technik | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 476364 Prüfungen in 28 Host-Programmen und 6 Python-Prüfungen (`ctest`) |
+| Tests | 476364 Prüfungen in 28 Host-Programmen und 7 Python-Prüfungen (`ctest`) |
 | Geräte | Zähler PZEM-004T v3 und PZEM-017 (bis zu 16), analoge Eingänge, Relais; Schalten standardmäßig aus |
 | Läuft auf | Eine ESP32-S3-Platine (Ethernet oder WLAN); Host-Tests auf jedem Computer |
 | Auf echter Hardware | Noch keiner: keine Platine aufgebaut und kein Zähler oder Schütz angeschlossen; nichts schaltet irgendetwas |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-28 Host-Testprogramme und 6 Python-Prüfungen laufen unter `ctest`; 476364 Prüfungen, gezählt von den Host-Programmen, mit `-Werror` gebaut.
+28 Host-Testprogramme und 7 Python-Prüfungen laufen unter `ctest`; 476364 Prüfungen, gezählt von den Host-Programmen, mit `-Werror` gebaut.
 
 Python-Prüfungen: die Panel-Texte in acht Sprachen, die Tasks, die Speicherpfade, die Bluetooth-Sitzung unter ihrer Sperre und die vom Panel aufgerufenen Routen (und in manchen Knoten die HTTP-Codes oder die Glyphen der Schriften)
 
