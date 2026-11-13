@@ -109,19 +109,27 @@ static void test_the_switch_set_takes_only_signed_commands_once_it_has_a_key() {
   }
 }
 
+// Whether the settings are refused because of the command key (a node with no meter is refused for other reasons).
+static bool key_refused(const config::Settings& s) {
+  for (const config::Problem& problem : config::validate(s)) if (problem.path == "command_key") return true;
+  return false;
+}
+
 static void test_the_key_is_a_secret_of_the_settings() {
   config::Settings s = config::default_settings("a1b2c3");
   s.command_key = kKey;
   const std::string shown = config::to_json(s, false);
   CHECK(shown.find(kKey) == std::string::npos && shown.find("\"command_key_set\":true") != std::string::npos);
   CHECK(config::to_json(s, true).find(std::string("\"command_key\":\"") + kKey + "\"") != std::string::npos);
-  CHECK(config::validate(s).empty());
+  CHECK(!key_refused(s));
   s.command_key = "abc";
-  CHECK(!config::validate(s).empty());
+  CHECK(key_refused(s));
   s.command_key = std::string(64, 'G');
-  CHECK(!config::validate(s).empty());
+  CHECK(key_refused(s));
+  s.command_key = std::string(64, 'A');
+  CHECK(key_refused(s));   // capitals are not the format
   s.command_key.clear();
-  CHECK(config::validate(s).empty() && config::to_json(s, false).find("\"command_key_set\":false") != std::string::npos);
+  CHECK(!key_refused(s) && config::to_json(s, false).find("\"command_key_set\":false") != std::string::npos);
 }
 
 int main() {
