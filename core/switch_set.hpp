@@ -23,6 +23,7 @@
 #include <utility>
 #include <vector>
 
+#include "command_sig.hpp"
 #include "electrical_json.hpp"
 #include "interlock.hpp"
 #include "json.hpp"
@@ -95,7 +96,7 @@ inline bool parse_command(std::string_view text, SwitchCommand& out, std::string
   auto fail = [&](const char* reason) { if (why != nullptr) *why = reason; return false; };
   json::Value doc;
   if (!json::parse(text, doc) || !doc.is_object()) return fail("not a JSON object");
-  static const char* const known[] = {"kind", "node_id", "timestamp_ms", "command_id", "switch", "action", "token"};
+  static const char* const known[] = {"kind", "node_id", "timestamp_ms", "command_id", "switch", "action", "token", "nonce", "sig"};
   for (const std::string& name : doc.names) {
     bool found = false;
     for (const char* k : known) found = found || name == k;
@@ -165,6 +166,11 @@ class SwitchSet {
   }
 
   std::size_t size() const { return entries_.size(); }
+
+  /// The key of this node for the signature of the commands (64 lowercase hexadecimal digits, from the settings); empty: any command of the contract is taken, as before.
+  void set_command_key(std::string key) { command_key_ = std::move(key); nonces_.clear(); }
+  /// Why the last command was dropped, or kOk when it was not.
+  command_sig::Verdict last_verdict() const { return last_verdict_; }
   /// True when at least one switch is allowed to switch: what the state message says as `switching_enabled`.
   bool switching_enabled() const { for (const Entry& e : entries_) if (e.config.transfer.allowed) return true; return false; }
 
@@ -187,7 +193,15 @@ class SwitchSet {
 
   /// One command as it arrived: the result to publish, or an empty string when there is nothing to answer (the text is not a command of the contract, or it is for
   /// another node). Never throws. A close that arrives twice moves nothing the second time: its token is spent.
-  std::string handle(std::string_view text, std::uint64_t now_ms) {
+  ///
+  /// With a command key (set_command_key) only a command the server signed is taken (command_sig.hpp): one that does not verify gets no answer, and last_verdict() says why.
+  /// `wall_ms` is the real time in milliseconds since 1970, or 0 while the node has none (then the nonces alone stop a replay).
+  std::string handle(std::string_view text, std::uint64_t now_ms, std::int64_t wall_ms = 0) {
+    last_verdict_ = command_sig::Verdict::kOk;
+    if (!command_key_.empty()) {
+      last_verdict_ = command_sig::verify(text, command_key_, nonces_, wall_ms);
+      if (last_verdict_ != command_sig::Verdict::kOk) return "";
+    }
     SwitchCommand command;
     if (!parse_command(text, command) || command.node_id != node_id_) return "";
     std::string token;
@@ -274,6 +288,9 @@ class SwitchSet {
 
   std::string node_id_;
   RandomBytes random_;
+  std::string command_key_;
+  command_sig::NonceCache nonces_;
+  command_sig::Verdict last_verdict_ = command_sig::Verdict::kOk;
   std::vector<Entry> entries_;
 };
 
