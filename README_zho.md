@@ -241,7 +241,7 @@ ARMOR-NODE-ELECTRICAL/
 ├── docs/                                12 份指南：安全、开关、消息、硬件
 ├── tools/                               构建、打包和检查工具
 ├── .github/                             CI 工作流以及 Issue 和 Pull Request 模板
-├── images/                              横幅、图标和本 README 的两幅图
+├── images/                              横幅、图标、README 图片、屏幕截图
 ├── build.sh build.bat                   通过共享的项目工作流构建
 ├── test.sh test.bat                     通过共享工作流运行测试
 ├── run.sh run.bat                       通过共享的项目工作流启动
@@ -254,6 +254,7 @@ ARMOR-NODE-ELECTRICAL/
 ├── sdkconfig.defaults                   固件设置
 ├── sdkconfig.board.s3-eth               某块电路板的设置
 ├── sdkconfig.board.s3-wifi              某块电路板的设置
+├── sdkconfig.switching                  切换镜像（默认关闭，从不发布）
 ├── secrets/                             节点文件示例（真实文件不纳入版本管理）
 ├── build-test.sh build-test.bat         通过共享工作流运行测试
 └── .gitattributes .gitignore            Git 设置

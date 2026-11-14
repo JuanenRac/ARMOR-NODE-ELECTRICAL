@@ -457,6 +457,19 @@
           }
         },
         {
+          "name": "sdkconfig.switching",
+          "desc": {
+            "en": "the switching image (off by default, never published)",
+            "es": "la imagen con conmutación (apagada por defecto, nunca publicada)",
+            "de": "das Schaltabbild (standardmäßig aus, nie veröffentlicht)",
+            "fr": "l'image de commutation (désactivée par défaut, jamais publiée)",
+            "it": "l'immagine di commutazione (spenta per impostazione predefinita, mai pubblicata)",
+            "ja": "切替イメージ（既定ではオフ、公開しません）",
+            "zh": "切换镜像（默认关闭，从不发布）",
+            "pt": "a imagem de comutação (desligada por defeito, nunca publicada)"
+          }
+        },
+        {
           "name": "secrets/",
           "desc": {
             "en": "example of the node file (the real ones are not versioned)",

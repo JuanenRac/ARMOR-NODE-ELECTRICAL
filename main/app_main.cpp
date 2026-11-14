@@ -5,7 +5,7 @@
  *
  * The hardware-independent core under core/ (the meters' frames, the bus, the message, the settings, the rules for switching) is built and tested on a computer
  * (tests/); the files beside this one are built with ESP-IDF 5.5.5 (tools/build_node.sh does it in a container). None of it has run on a board yet, and no meter has
- * been connected. THIS FIRMWARE ONLY READS: it has no code that writes to a meter or switches anything.
+ * been connected. THIS FIRMWARE ONLY READS: it has no code that writes to a meter, and it switches nothing unless it was built as the SWITCHING image (CONFIG_ARMOR_SWITCHING, off by default, never published).
  *
  * What a node is, in one paragraph: everything that differs from node to node (its identity, its Wi-Fi, its broker and the meters on its serial line) is one settings
  * document in flash, edited from the node's own web panel, so the same firmware image serves every node and no password is compiled in. A node with no user yet is in
