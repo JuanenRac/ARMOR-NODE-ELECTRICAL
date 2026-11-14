@@ -19,11 +19,6 @@ on:
         options: [s3-eth, s3-wifi]
         required: true
         default: s3-eth
-      ref:
-        description: "Branch, tag or commit of this repository"
-        type: string
-        required: true
-        default: main
       idf_image:
         description: "ESP-IDF container"
         type: string
@@ -34,7 +29,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: switching-build-${{ inputs.ref }}-${{ inputs.board }}
+  group: switching-build-${{ github.ref_name }}-${{ inputs.board }}
   cancel-in-progress: false
 
 jobs:
@@ -48,7 +43,8 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.ref }}
+          # the commit this run was started from (start the run from the branch, tag or commit to build); never a ref typed into an input
+          ref: ${{ github.sha }}
           persist-credentials: false
 
       - name: Build the image in the ESP-IDF container
