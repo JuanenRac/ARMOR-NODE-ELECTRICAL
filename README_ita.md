@@ -241,7 +241,7 @@ ARMOR-NODE-ELECTRICAL/
 ├── docs/                                12 guide: sicurezza, manovra, messaggi, hardware
 ├── tools/                               strumenti di build, impacchettamento e verifica
 ├── .github/                             workflow CI e modelli per issue e pull request
-├── images/                              banner, icona e le due immagini di questo README
+├── images/                              banner, icona, immagini del README, schermate
 ├── build.sh build.bat                   build tramite il flusso di progetto condiviso
 ├── test.sh test.bat                     eseguire i test tramite il flusso condiviso
 ├── run.sh run.bat                       avvio tramite il flusso di progetto condiviso
@@ -254,6 +254,7 @@ ARMOR-NODE-ELECTRICAL/
 ├── sdkconfig.defaults                   le impostazioni del firmware
 ├── sdkconfig.board.s3-eth               le impostazioni di una scheda
 ├── sdkconfig.board.s3-wifi              le impostazioni di una scheda
+├── sdkconfig.switching                  l'immagine di commutazione (spenta per impostazione predefinita, mai pubblicata)
 ├── secrets/                             esempio del file del nodo (quelli veri non sono versionati)
 ├── build-test.sh build-test.bat         eseguire i test tramite il flusso condiviso
 └── .gitattributes .gitignore            impostazioni di Git

@@ -106,6 +106,10 @@ class Runner {
   bool line_in_use(int line) const { return line >= 0 && line < kLines && !slots_[line].empty(); }
   // The node's own analog inputs: asked for at every round, and their channels go after the meters' in the message.
   void set_analog_provider(std::function<std::vector<electrical::AnalogChannel>()> provider) { analog_ = std::move(provider); }
+  // The switches of the node (the image that can switch, main/switching.cpp): whether the firmware may switch at all and the `switches` array, asked for at every round.
+  // Without a provider the message says `switching_enabled: false` and carries no switches, as before.
+  struct SwitchReport { bool enabled = false; std::string json; };
+  void set_switch_provider(std::function<SwitchReport(std::uint64_t now_ms)> provider) { switches_ = std::move(provider); }
   void set_line_open(int line = 0) { if (line_in_use(line)) bus_[line].state = "running"; }
   void set_line_failed(const std::string& why, int line = 0) { if (line_in_use(line)) { bus_[line].state = "error"; bus_[line].error = why; } }
 
@@ -142,7 +146,8 @@ class Runner {
       const std::uint64_t stamp = clock.wall_clock_is_set() ? clock.wall_clock_ms() : after;
       std::vector<const electrical::MeterState*> fresh = engine_[0]->fresh(after);
       for (const electrical::MeterState* state : engine_[1]->fresh(after)) fresh.push_back(state);
-      message_ = electrical::message_json(settings_.node_id, stamp, false, fresh, {}, "", analog_ ? analog_() : std::vector<electrical::AnalogChannel>{}, after);
+      const SwitchReport report = switches_ ? switches_(after) : SwitchReport{};
+      message_ = electrical::message_json(settings_.node_id, stamp, report.enabled, fresh, {}, report.json, analog_ ? analog_() : std::vector<electrical::AnalogChannel>{}, after);
       for (int k = 0; k < kLines; ++k) if (!slots_[k].empty()) ++bus_[k].messages;
       outcome.message = true;
     }
@@ -185,6 +190,7 @@ class Runner {
   std::array<MeterStatus, config::kMeterCount> meters_;
   std::array<std::vector<std::size_t>, kLines> slots_;   // the panel's number of each meter of each line
   std::function<std::vector<electrical::AnalogChannel>()> analog_;
+  std::function<SwitchReport(std::uint64_t)> switches_;
   std::array<std::unique_ptr<electrical::PzemBus>, kLines> engine_;
   std::uint8_t buffer_[64] = {};
   std::string message_;

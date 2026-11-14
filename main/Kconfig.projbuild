@@ -90,6 +90,67 @@ config ARMOR_ETH_SPI_MHZ
 
 endmenu
 
+menu "Switching image (a build that can close contactors)"
+
+config ARMOR_SWITCHING
+    bool "Build the SWITCHING image: one transfer switch driven by commands from the server"
+    default n
+    help
+        OFF by default, and the images that are published never have it. On: the firmware owns two coil pins and two auxiliary-contact pins, listens to
+        armor/electrical/<node>/command and answers on armor/electrical/<node>/result, under the rules of core/interlock.hpp: closing is two steps (arm, then close with the one-time
+        token), never both sources at once, a dead time between them, and any fault opens everything and stays latched. Opening needs no token. The server also has to be switched on
+        for switching (ARMOR_ELECTRICAL_SWITCHING=1). Not a protection relay and not a certified safety function; the contactors and the wiring are the installer's. Nothing here has run on a board.
+
+config ARMOR_SWITCH_COIL_A_GPIO
+    int "GPIO of the coil of source A"
+    depends on ARMOR_SWITCHING
+    range 1 48
+    default 4
+config ARMOR_SWITCH_COIL_B_GPIO
+    int "GPIO of the coil of source B"
+    depends on ARMOR_SWITCHING
+    range 1 48
+    default 5
+config ARMOR_SWITCH_AUX_A_GPIO
+    int "GPIO of the auxiliary contact of source A"
+    depends on ARMOR_SWITCHING
+    range 1 48
+    default 6
+config ARMOR_SWITCH_AUX_B_GPIO
+    int "GPIO of the auxiliary contact of source B"
+    depends on ARMOR_SWITCHING
+    range 1 48
+    default 7
+    help
+        The four pins must not be a pin of a relay, an analog input, the serial line or the radio set in the panel, nor GPIO 0 (the BOOT button).
+
+config ARMOR_SWITCH_COIL_ACTIVE_LOW
+    bool "A coil is energised by a LOW level"
+    depends on ARMOR_SWITCHING
+    default n
+config ARMOR_SWITCH_AUX_ACTIVE_LOW
+    bool "An auxiliary contact reads LOW when its contactor is closed (pull-up on the pin)"
+    depends on ARMOR_SWITCHING
+    default y
+
+config ARMOR_SWITCH_DEAD_TIME_MS
+    int "Dead time: milliseconds both contactors are confirmed open before either may close"
+    depends on ARMOR_SWITCHING
+    range 500 60000
+    default 2000
+config ARMOR_SWITCH_CONFIRM_TIMEOUT_MS
+    int "Milliseconds a contactor may take to show what it was told before it is a fault"
+    depends on ARMOR_SWITCHING
+    range 100 10000
+    default 1000
+config ARMOR_SWITCH_ARM_WINDOW_MS
+    int "Milliseconds an arm lasts"
+    depends on ARMOR_SWITCHING
+    range 2000 60000
+    default 10000
+
+endmenu
+
 menu "Broker (first settings)"
 
 config ARMOR_MQTT_URI

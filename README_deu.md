@@ -241,7 +241,7 @@ ARMOR-NODE-ELECTRICAL/
 ├── docs/                                12 Anleitungen: Sicherheit, Schalten, Nachrichten, Hardware
 ├── tools/                               Werkzeuge für Build, Packen und Prüfung
 ├── .github/                             CI-Workflow sowie Vorlagen für Issues und Pull Requests
-├── images/                              Banner, Symbol und die zwei Bilder dieses READMEs
+├── images/                              Banner, Symbol, README-Bilder, Screenshots
 ├── build.sh build.bat                   Build über den gemeinsamen Projekt-Workflow
 ├── test.sh test.bat                     Tests über den gemeinsamen Workflow ausführen
 ├── run.sh run.bat                       Start über den gemeinsamen Projekt-Workflow
@@ -254,6 +254,7 @@ ARMOR-NODE-ELECTRICAL/
 ├── sdkconfig.defaults                   die Firmware-Einstellungen
 ├── sdkconfig.board.s3-eth               die Einstellungen einer Platine
 ├── sdkconfig.board.s3-wifi              die Einstellungen einer Platine
+├── sdkconfig.switching                  das Schaltabbild (standardmäßig aus, nie veröffentlicht)
 ├── secrets/                             Beispiel der Knotendatei (die echten sind nicht versioniert)
 ├── build-test.sh build-test.bat         Tests über den gemeinsamen Workflow ausführen
 └── .gitattributes .gitignore            Git-Einstellungen

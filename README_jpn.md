@@ -241,7 +241,7 @@ ARMOR-NODE-ELECTRICAL/
 ├── docs/                                12 のガイド：安全、開閉、メッセージ、ハードウェア
 ├── tools/                               ビルド・パッケージ・検査のツール
 ├── .github/                             CI ワークフローと Issue・Pull Request のテンプレート
-├── images/                              バナー、アイコン、この README の 2 つの図
+├── images/                              バナー、アイコン、README の図、スクリーンショット
 ├── build.sh build.bat                   共通のプロジェクトワークフローでビルド
 ├── test.sh test.bat                     共通のワークフローでテストを実行
 ├── run.sh run.bat                       共通のプロジェクトワークフローで起動
@@ -254,6 +254,7 @@ ARMOR-NODE-ELECTRICAL/
 ├── sdkconfig.defaults                   ファームウェアの設定
 ├── sdkconfig.board.s3-eth               基板ごとの設定
 ├── sdkconfig.board.s3-wifi              基板ごとの設定
+├── sdkconfig.switching                  切替イメージ（既定ではオフ、公開しません）
 ├── secrets/                             ノードファイルの例（本物はバージョン管理しません）
 ├── build-test.sh build-test.bat         共通のワークフローでテストを実行
 └── .gitattributes .gitignore            Git の設定

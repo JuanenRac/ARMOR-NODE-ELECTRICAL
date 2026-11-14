@@ -289,6 +289,34 @@ static void test_analog_inputs() {
   }
 }
 
+// The switches of the node: without a provider the message says it cannot switch and has no `switches`; with one it carries what the provider gives, and `switching_enabled` follows it.
+static void test_switch_provider() {
+  {
+    World world;
+    Runner runner(settings_with({}));
+    run(runner, world, 6);
+    CHECK(contains(runner.message(), "\"switching_enabled\":false") && !contains(runner.message(), "\"switches\""));
+  }
+  {
+    World world;
+    Runner runner(settings_with({}));
+    std::uint64_t asked_at = 0;
+    runner.set_switch_provider([&asked_at](std::uint64_t now_ms) {
+      asked_at = now_ms;
+      return Runner::SwitchReport{true, "[{\"id\":\"transfer\",\"kind\":\"transfer\"}]"};
+    });
+    run(runner, world, 6);
+    CHECK(asked_at > 0 && contains(runner.message(), "\"switching_enabled\":true") && contains(runner.message(), "\"switches\":[{\"id\":\"transfer\""));
+  }
+  {
+    World world;   // a provider that has no switch to report (an empty array text) leaves the field out
+    Runner runner(settings_with({}));
+    runner.set_switch_provider([](std::uint64_t) { return Runner::SwitchReport{false, ""}; });
+    run(runner, world, 4);
+    CHECK(contains(runner.message(), "\"switching_enabled\":false") && !contains(runner.message(), "\"switches\""));
+  }
+}
+
 static void test_two_lines() {
   // a PZEM-004T on the first line and a PZEM-017 on the second, both with address 1: an address only has to be its own on its line
   World first, second;
@@ -485,6 +513,7 @@ int main() {
   test_the_polling_period();
   test_sixteen_meters();
   test_analog_inputs();
+  test_switch_provider();
   test_two_lines();
   std::printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;

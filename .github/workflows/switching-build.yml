@@ -1,0 +1,88 @@
+# =============================================================================
+# A.R.M.O.R. - Build check of the SWITCHING image (the firmware that can close contactors)
+# Copyright (C) 2026 JuanenRac (Electro Hobby 3D)
+# GPL-3.0-or-later - see LICENSE
+# =============================================================================
+# Started by hand only (workflow_dispatch). It compiles the generic image with CONFIG_ARMOR_SWITCHING=y in the official ESP-IDF container (tools/build_node.sh, ARMOR_SWITCHING=1,
+# no fleet secret), checks that the switching code is in the image and that the pins and the times of the menu are the defaults, and keeps the .bin as an artifact for a week.
+# It publishes nothing, signs nothing and creates no release: the switching image is for a bench and is never a release image. The images that are published are built by
+# firmware-build.yml, which never sets ARMOR_SWITCHING.
+
+name: Switching image build check
+
+on:
+  workflow_dispatch:
+    inputs:
+      board:
+        description: "Board"
+        type: choice
+        options: [s3-eth, s3-wifi]
+        required: true
+        default: s3-eth
+      ref:
+        description: "Branch, tag or commit of this repository"
+        type: string
+        required: true
+        default: main
+      idf_image:
+        description: "ESP-IDF container"
+        type: string
+        required: true
+        default: espressif/idf:v5.5.5
+
+permissions:
+  contents: read
+
+concurrency:
+  group: switching-build-${{ inputs.ref }}-${{ inputs.board }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build the switching image
+    runs-on: ubuntu-24.04   # the image is built in a container; the runner only has to run docker
+    timeout-minutes: 60
+    env:
+      BOARD: ${{ inputs.board }}
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+
+      - name: Build the image in the ESP-IDF container
+        shell: bash
+        env:
+          ARMOR_IDF_IMAGE: ${{ inputs.idf_image }}
+          ARMOR_SWITCHING: "1"
+        run: |
+          set -euo pipefail
+          export ARMOR_BUILD_CPUSET="0-$(( $(nproc) - 1 ))"
+          bash tools/build_node.sh generic "$BOARD"
+
+      - name: Check what the image carries
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="dist/generic-$BOARD-switching.bin"
+          config="build/generic-$BOARD-switching/sdkconfig"
+          [ -f "$image" ] || { echo "::error::$image was not made"; exit 1; }
+          grep -q '^CONFIG_ARMOR_SWITCHING=y' "$config" || { echo "::error::$config does not have CONFIG_ARMOR_SWITCHING=y"; exit 1; }
+          grep -a -q 'SWITCHING IMAGE: this firmware can close contactors' "$image" || { echo "::error::the switching code is not in $image"; exit 1; }
+          if grep -E '^CONFIG_ARMOR_(FLEET_SECRET|SETUP_CODE)="[^"]+"' "$config" >/dev/null; then
+            echo "::error::$config carries a fleet secret or a set-up code"
+            exit 1
+          fi
+          grep -E '^CONFIG_ARMOR_SWITCH_' "$config"
+          ( cd dist && sha256sum "generic-$BOARD-switching.bin" | tee SHA256SUMS-switching )
+
+      - name: Keep the image for a week
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: switching-image-${{ inputs.board }}
+          path: |
+            dist/generic-${{ inputs.board }}-switching.bin
+            dist/SHA256SUMS-switching
+          retention-days: 7
+          if-no-files-found: error
