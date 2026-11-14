@@ -40,6 +40,15 @@ else
   grep -q "CONFIG_ARMOR_NODE_ID=\"$NODE\"" "$ROOT/$CONF" || { echo "$CONF must set CONFIG_ARMOR_NODE_ID=\"$NODE\"" >&2; exit 1; }
 fi
 
+# The SWITCHING image (ARMOR_SWITCHING=1): the same firmware plus the code that can close contactors (sdkconfig.switching). It is named *-switching.bin and is never a release image.
+if [[ "${ARMOR_SWITCHING:-0}" == "1" ]]; then
+  [[ "$NODE" == "generic" ]] || { echo "ARMOR_SWITCHING=1 builds only the generic image" >&2; exit 2; }
+  [[ "${ARMOR_WITH_FLEET_SECRET:-0}" != "1" ]] || { echo "the switching image is built without the fleet secret" >&2; exit 2; }
+  DEFAULTS="$DEFAULTS;sdkconfig.switching"
+  IMAGE="$IMAGE-switching"
+  echo "NOTE: this image can close contactors (dist/$IMAGE.bin). It is for a bench; never publish it." >&2
+fi
+
 DOCKER="docker"
 docker info >/dev/null 2>&1 || DOCKER="sudo docker"
 mkdir -p "$ROOT/dist" "$ROOT/build"

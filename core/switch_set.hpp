@@ -186,6 +186,14 @@ class SwitchSet {
     }
   }
 
+  /// Opens every switch now and withdraws every arm: what the node does when it is paused or put in standby by the server (the same as an `open` command, with no message).
+  void open_all(std::uint64_t now_ms) {
+    for (Entry& e : entries_) {
+      e.token.clear();
+      e.controller.request(Source::kNone, now_ms);
+    }
+  }
+
   /// What to drive for a switch (nothing energised when it is unknown).
   Coils coils(const std::string& id) const { const Entry* e = find(id); return e != nullptr ? e->controller.coils() : Coils{}; }
   Fault fault(const std::string& id) const { const Entry* e = find(id); return e != nullptr ? e->controller.fault() : Fault::kNone; }

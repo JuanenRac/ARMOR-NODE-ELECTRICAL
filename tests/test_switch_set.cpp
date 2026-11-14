@@ -121,6 +121,25 @@ static void test_conformance(const std::string& directory) {
   CHECK(seen >= 20);
 }
 
+// open_all: what a paused node does. Everything opens, a pending arm is withdrawn (its token no longer closes anything) and a closed switch can be closed again after a new arm.
+static void test_open_all() {
+  Bench bench;
+  bench.run(3000);
+  const std::string closing = bench.arm();
+  CHECK(Bench::accepted(bench.ask(Bench::command("close_a", closing))));
+  bench.run(3000);
+  CHECK(bench.a.actual);
+  const std::string pending = bench.arm();
+  bench.set.open_all(bench.now);
+  bench.run(500);
+  CHECK(!bench.a.actual && !bench.b.actual && !bench.set.coils("transfer").a && !bench.set.coils("transfer").b);
+  CHECK(Bench::refusal(bench.ask(Bench::command("close_a", pending))) == "not_armed");
+  const std::string again = bench.arm();
+  CHECK(Bench::accepted(bench.ask(Bench::command("close_b", again))));
+  bench.run(4000);
+  CHECK(bench.b.actual && bench.both_closed_ticks == 0);
+}
+
 static void test_two_step_close() {
   Bench bench;
   bench.run(3000);
@@ -299,6 +318,7 @@ int main(int argc, char** argv) {
   test_reader();
   test_conformance(argc > 1 ? argv[1] : "../ARMOR-COMMON/conformance");
   test_two_step_close();
+  test_open_all();
   test_the_token_is_the_key();
   test_refusals();
   test_state_message();

@@ -40,6 +40,7 @@ extern "C" {
 #include "analog_inputs.hpp"
 #include "electrical_manager.hpp"
 #include "relay_outputs.hpp"
+#include "switching.hpp"
 #include "web_server.hpp"
 #include "zigbee_bridge.hpp"
 
@@ -140,13 +141,18 @@ extern "C" void app_main() {
     control.node_id = settings.node_id;
     control.publish = [](const std::string& topic, const std::string& payload) { armor::mqtt_link::publish(topic, payload); };
     control.publish_retained = [](const std::string& topic, const std::string& payload) { armor::mqtt_link::publish_retained(topic, payload); };
-    control.on_state = [](armor::control::State state) { armor::relay_outputs::hold_open(state != armor::control::State::kRunning); };   // paused or in standby: every relay is open and none moves
+    control.on_state = [](armor::control::State state) {
+      armor::relay_outputs::hold_open(state != armor::control::State::kRunning);
+      armor::switching::hold_open(state != armor::control::State::kRunning);   // the switching image opens its contactors too
+    };   // paused or in standby: every relay is open and none moves
     armor::node_control::start(control);
   }
   // The meters run first: on the bench their statistics are the first thing to look at, with or without a network. A node in setup reads nothing yet.
   if (!setup) {
     armor::relay_outputs::start(settings, settings.node_id);   // every relay starts open
     armor::analoginputs::start(settings);
+    // The switching image only (CONFIG_ARMOR_SWITCHING, off by default; empty in every other image): it listens to the commands of the server from the broker's first connection.
+    if (settings.mqtt.enabled) armor::switching::start(settings.node_id, settings.command_key, [](const std::string& topic, const std::string& payload) { armor::mqtt_link::publish(topic, payload); });
   }
   if (!setup) armor::manager::start(settings, [](const std::string& topic, const std::string& payload) { armor::mqtt_link::publish(topic, payload); });
 

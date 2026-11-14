@@ -19,6 +19,7 @@ extern "C" {
 #include "core/electrical_json.hpp"
 #include "analog_inputs.hpp"
 #include "mqtt_link.hpp"
+#include "switching.hpp"
 #include "uart_bus.hpp"
 
 namespace armor::manager {
@@ -97,9 +98,14 @@ void start(const config::Settings& settings, Publish publish) {
     g_meters = g_runner->meters();
   }
   g_runner->set_analog_provider([] { return analoginputs::channels(); });
+  g_runner->set_switch_provider([](std::uint64_t) {   // an image that cannot switch gives an empty report: `switching_enabled: false` and no `switches`
+    const switching::Report report = switching::report();
+    return Runner::SwitchReport{report.enabled, report.json};
+  });
   bool any_analog = false;
   for (const config::AnalogSetting& input : settings.analogs) any_analog = any_analog || input.enabled;
-  if (g_runner->any_meter() || any_analog) xTaskCreate(bus_task, "meters", 6144, nullptr, 5, nullptr);
+  const bool any_switch = switching::report().enabled;   // the switching image says its state in the same message, so the task runs for it too
+  if (g_runner->any_meter() || any_analog || any_switch) xTaskCreate(bus_task, "meters", 6144, nullptr, 5, nullptr);
 }
 
 BusStatus bus(int line) { std::lock_guard<std::mutex> guard(g_lock); return g_bus[line == 1 ? 1 : 0]; }
