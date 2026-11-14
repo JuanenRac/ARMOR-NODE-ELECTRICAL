@@ -29,7 +29,7 @@
 
 ---
 
-**Honesty check - what runs today:** The core (the frames of the PZEM-004T v3 and PZEM-017 meters, the bus that asks them, the message of the node, the analogue inputs and the rules for switching: 390,369 checks in 28 test programs, 375,039 of them on the switching rules) is tested on a computer with stand-in meters and contactors, and the messages it makes are accepted by ARMOR-COMMON. The firmware of the node (the settings, the serial line, the Meters and Readings pages of its panel, Bluetooth, signed updates) builds in the ESP-IDF 5.5.5 container for both boards. **It has never run on a board, nothing has been connected to a meter or a contactor, and nothing here switches anything.**
+**Honesty check - what runs today:** The core (the frames of the PZEM-004T v3 and PZEM-017 meters, the bus that asks them, the message of the node, the analogue inputs and the rules for switching: 390,369 checks in 30 test programs, 375,039 of them on the switching rules) is tested on a computer with stand-in meters and contactors, and the messages it makes are accepted by ARMOR-COMMON. The firmware of the node (the settings, the serial line, the Meters and Readings pages of its panel, Bluetooth, signed updates) builds in the ESP-IDF 5.5.5 container for both boards. **It has never run on a board, nothing has been connected to a meter or a contactor, and nothing here switches anything.**
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturity | Functional |
 | Role | Electrical field node: meters, inputs and switching (family: Field Nodes, parent: ARMOR-COMMON) |
 | Stack | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Tests | 476364 checks in 28 host programs and 7 Python checks (`ctest`) |
+| Tests | 476364 checks in 30 host programs and 7 Python checks (`ctest`) |
 | Equipment | PZEM-004T v3 and PZEM-017 meters (up to 16), analogue inputs, relays; switching off by default |
 | Runs on | An ESP32-S3 board (Ethernet or Wi-Fi); host tests on any computer |
 | On real hardware | None yet: no board built and no meter or contactor connected; nothing switches anything |
@@ -58,7 +58,7 @@ Each line is one part of this repository and the light says how far it is today.
 | Area | State | What it means here |
 |---|---|---|
 | Software | 🟢 | The firmware builds in the ESP-IDF 5.5.5 container for both boards (Wi-Fi and Ethernet). |
-| Tests | 🟢 | 390,369 checks in 28 host programs pass (`ctest`), 375,039 of them on the switching rules; the meters and contactors are stand-ins. |
+| Tests | 🟢 | 390,369 checks in 30 host programs pass (`ctest`), 375,039 of them on the switching rules; the meters and contactors are stand-ins. |
 | Protocols and data | 🟡 | The PZEM-004T v3 and PZEM-017 frames and readings are checked against the documented frames and recorded samples; no meter has answered yet. |
 | Interface | 🟡 | The Meters and Readings pages of the web panel are exercised in a browser against a stand-in node, not on a board. |
 | Hardware | 🔴 | No board built and no meter or contactor connected: nothing has run on real equipment yet. |
@@ -202,7 +202,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-28 host test programs and 7 Python checks run under `ctest`; 476364 checks counted by the host programs, built with `-Werror`.
+30 host test programs and 7 Python checks run under `ctest`; 476364 checks counted by the host programs, built with `-Werror`.
 
 Python checks: the panel texts in eight languages, the tasks, the save paths, the Bluetooth session under its lock and the routes the panel calls (and, in some nodes, the HTTP codes or the glyphs of the fonts)
 
