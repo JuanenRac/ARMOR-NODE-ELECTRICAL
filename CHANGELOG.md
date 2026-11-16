@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The order channel of the node can check a signature before it reads anything:** `node_control::Options` has an optional `authorize` hook that sees each order that arrives on `armor/control/...` and drops it, before it can arm anything, when the node says no. A node that does not set it behaves as before.
+
 ## [0.5.9] - A switching image kept off by default, signed switch commands and board-guarded uploads
 
 - **A switching image, off by default and never published:** `ARMOR_SWITCHING=1 bash tools/build_node.sh generic <board>` builds the generic image with `CONFIG_ARMOR_SWITCHING=y` (`main/switching.cpp`, `sdkconfig.switching`, the menu "Switching image"): one `transfer` switch with two coil pins and two auxiliary-contact pins, driven by `SwitchSet` from the signed commands on `armor/electrical/<node>/command`, with the answer on `.../result`, the pins set to open before they become outputs, written again every 20 ms and never both energised, every switch opened while the node is paused or in standby, and `switching_enabled` and `switches` in the state message (`Runner::set_switch_provider`, `SwitchSet::open_all`, tested on a computer). The manual workflow `switching-build.yml` compiles it for both boards and keeps the file for a week. Every other image keeps empty stand-ins. Nothing has run on a board.
