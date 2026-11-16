@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The copy of the running firmware to the other slot waits for an install or a manual write that is on:** `start_copy()` takes the same lock as `install()` and the manual writes (not only the flag of its own job) and gives it back when it ends, so two writers can no longer open the same slot.
 - **The manual firmware upload and the change of boot slot take the same lock as an installation from GitHub and a copy of the slot:** only one of them writes or reads the slot at a time (a second one is answered `409 ota_busy`), and the buffers of the upload and of the slot check are no longer shared between the two web servers. Before, an upload could overlap another writer or an upload through the other server and end in a corrupt image. Not run on a board; the build is checked in CI.
 - **The header of the switch layer says where it is linked:** it is part of the switching image only, not of the published images, as the switching document already explains.
 
