@@ -5,9 +5,9 @@
 //   armor/electrical/<node>/result    node -> server   kind "electrical_result": whether the request was accepted and, when not, why.
 //   The state of every switch travels in the ordinary state message (`switches`, see `switches_json`), and it is what the auxiliary contacts show.
 //
-// This is the layer between a message and `TransferController`: it parses a command strictly, refuses what it should, and answers. It drives no hardware and is NOT
-// linked into the firmware: no image of this project creates a `SwitchSet`, so no node can act on a command yet, and the node's state message says
-// `switching_enabled: false`. Everything here is tested on a computer with stand-in contactors (tests/test_switch_set.cpp).
+// This is the layer between a message and `TransferController`: it parses a command strictly, refuses what it should, and answers. It drives no hardware itself and is
+// linked only into the switching image (`CONFIG_ARMOR_SWITCHING`, see docs/SWITCHING.md): the published images never create a `SwitchSet`, so they cannot act on a
+// command, and their state message says `switching_enabled: false`. Everything here is tested on a computer with stand-in contactors (tests/test_switch_set.cpp).
 //
 // Closing is two steps, and the second cannot be replayed:
 //   1. `arm`: the node answers with a one-time token (64 random bits) and arms the controller for `arm_window_ms`.
