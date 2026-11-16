@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The header of the switch layer says where it is linked:** it is part of the switching image only, not of the published images, as the switching document already explains.
+
 - **The order channel of the node can check a signature before it reads anything:** `node_control::Options` has an optional `authorize` hook that sees each order that arrives on `armor/control/...` and drops it, before it can arm anything, when the node says no. A node that does not set it behaves as before.
 
 ## [0.5.9] - A switching image kept off by default, signed switch commands and board-guarded uploads
