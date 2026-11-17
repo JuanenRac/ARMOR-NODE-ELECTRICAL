@@ -203,7 +203,7 @@ class SwitchSet {
   /// another node). Never throws. A close that arrives twice moves nothing the second time: its token is spent.
   ///
   /// With a command key (set_command_key) only a command the server signed is taken (command_sig.hpp): one that does not verify gets no answer, and last_verdict() says why.
-  /// `wall_ms` is the real time in milliseconds since 1970, or 0 while the node has none (then the nonces alone stop a replay).
+  /// `wall_ms` is the real time in milliseconds since 1970, or 0 while the node has none (then the nonces alone stop a replay). The result carries it as its `timestamp_ms` when it is above 0, and the time since boot (`now_ms`) when it is not.
   std::string handle(std::string_view text, std::uint64_t now_ms, std::int64_t wall_ms = 0) {
     last_verdict_ = command_sig::Verdict::kOk;
     if (!command_key_.empty()) {
@@ -214,7 +214,7 @@ class SwitchSet {
     if (!parse_command(text, command) || command.node_id != node_id_) return "";
     std::string token;
     const Answer answer = act(command, now_ms, token);
-    return result_json(node_id_, now_ms, command, answer, token);
+    return result_json(node_id_, wall_ms > 0 ? static_cast<std::uint64_t>(wall_ms) : now_ms, command, answer, token);   // the real time when the node has it, otherwise the time since boot
   }
 
   /// The `switches` array of the state message (an empty string when the node has no switch, so the message has none).

@@ -115,6 +115,24 @@ static bool key_refused(const config::Settings& s) {
   return false;
 }
 
+static void test_the_result_carries_the_real_time_when_the_node_has_it() {
+  const auto random = [](std::uint8_t* out, std::size_t n) { for (std::size_t i = 0; i < n; ++i) out[i] = static_cast<std::uint8_t>(i * 7 + 1); return true; };
+  electrical::SwitchConfig config;
+  config.id = "transfer";
+  {
+    electrical::SwitchSet set("electrical-1", random);
+    CHECK(set.add(config));
+    const std::string answer = set.handle(kClose, 5000, 1760000000000LL);
+    CHECK(answer.find("\"timestamp_ms\":1760000000000") != std::string::npos);
+  }
+  {
+    electrical::SwitchSet set("electrical-1", random);
+    CHECK(set.add(config));
+    const std::string answer = set.handle(kClose, 5000);
+    CHECK(answer.find("\"timestamp_ms\":5000") != std::string::npos);   // no real time: the time since boot, as before
+  }
+}
+
 static void test_the_key_is_a_secret_of_the_settings() {
   config::Settings s = config::default_settings("a1b2c3");
   s.command_key = kKey;
@@ -136,6 +154,7 @@ int main() {
   test_the_vector_verifies_and_every_change_of_it_does_not();
   test_the_freshness_and_the_memory();
   test_the_switch_set_takes_only_signed_commands_once_it_has_a_key();
+  test_the_result_carries_the_real_time_when_the_node_has_it();
   test_the_key_is_a_secret_of_the_settings();
   std::printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
