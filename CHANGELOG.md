@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The signature code is the shared one:** `core/command_sig.hpp` and `core/hmac_sha256.hpp` come from the shared firmware base. The orders to the node itself (restart, pause, standby...) can require the signature of the server with the new setting `security.control_require_sig` (off by default; it uses `command_key`, and with no valid key every order is refused).
+
 - **The simulation bench keeps a matrix of the faults it played:** the run writes a report of which fault of the bus passed, failed or was not run, prints it as one line of a bus-by-fault matrix in the summary of the run, and keeps both files as an artifact for two weeks. The matrix says what the simulated bus covered; it says nothing about the real equipment.
 
 - **The switching image can be built to require a command key:** the build option `ARMOR_SWITCH_REQUIRE_KEY` (off by default) makes a node without a `command_key` add its transfer switch as not allowed, so every close is refused and the state says `switching_enabled` false. Host test only; nothing has run on a board.
