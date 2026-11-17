@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The simulation bench keeps a matrix of the faults it played:** the run writes a report of which fault of the bus passed, failed or was not run, prints it as one line of a bus-by-fault matrix in the summary of the run, and keeps both files as an artifact for two weeks. The matrix says what the simulated bus covered; it says nothing about the real equipment.
+
 - **The switching image can be built to require a command key:** the build option `ARMOR_SWITCH_REQUIRE_KEY` (off by default) makes a node without a `command_key` add its transfer switch as not allowed, so every close is refused and the state says `switching_enabled` false. Host test only; nothing has run on a board.
 
 - **The result of a switch command carries the real time when the node has it:** `timestamp_ms` of the result is the time since 1970 once the clock is set, and the time since boot only while it is not (before, it was always the time since boot, so a server comparing it with its own clock saw it years in the past). Tests for both cases.
