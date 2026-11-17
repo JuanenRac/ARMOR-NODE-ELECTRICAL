@@ -181,6 +181,7 @@ Le secteur (230 V CA) et le courant continu d'un banc de batteries peuvent tuer 
 | `analog_stream.continuous` | off | Lire les entrées analogiques en flux que le convertisseur remplit seul (DMA) et prendre la valeur efficace d'une entrée alternative sur des cycles entiers du secteur repérés par leurs passages par zéro ; effet après un redémarrage |
 | `analog_stream.sample_rate_hz`, `window_ms`, `min_cycles`, `hysteresis_mv`, `min_hz`, `max_hz` | 20000, 400, 5, 30, 40, 70 | La fréquence d'échantillonnage du flux (2000-80000), la fenêtre la plus longue pendant laquelle une entrée est lue, les cycles entiers requis pour mesurer sur des cycles (2-50), l'excursion en millivolts qui compte comme un cycle et les fréquences qui peuvent être le secteur |
 | `analogs[].cal_gain`, `cal_offset_mv` | 1 (0.5-2), 0 (+-500) | L'étalonnage d'une entrée, mesuré par rapport à une référence comme un multimètre : corrigé = (lecture en mV - décalage) x gain ; 1 et 0 laissent la lecture telle que la puce l'a donnée (une entrée alternative n'a que le gain) |
+| `ARMOR_SWITCH_REQUIRE_KEY` | off | Option de compilation de l'image de commutation : un nœud sans `command_key` ajoute alors l'interrupteur comme non autorisé, toute fermeture est refusée et l'état indique `switching_enabled` faux |
 
 ## 🚀 Démarrage rapide
 

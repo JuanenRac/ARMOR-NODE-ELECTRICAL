@@ -181,6 +181,7 @@ Mains (230 V AC) and the DC of a battery bank can kill and start fires. [docs/SA
 | `analog_stream.continuous` | off | Read the analog inputs as a stream the converter fills by itself (DMA) and take the effective value of an alternating input over whole cycles of the mains found by their zero crossings; takes effect after a restart |
 | `analog_stream.sample_rate_hz`, `window_ms`, `min_cycles`, `hysteresis_mv`, `min_hz`, `max_hz` | 20000, 400, 5, 30, 40, 70 | The stream's sample rate (2000-80000), the longest window an input is read for, the whole cycles needed to measure over cycles (2-50), the swing in millivolts that counts as a cycle and the frequencies that can be the mains |
 | `analogs[].cal_gain`, `cal_offset_mv` | 1 (0.5-2), 0 (+-500) | The calibration of an input, measured against a reference such as a multimeter: corrected = (reading in mV - offset) x gain; 1 and 0 leave the reading as the chip gave it (an alternating input has the gain only) |
+| `ARMOR_SWITCH_REQUIRE_KEY` | off | Build option of the switching image: a node with no `command_key` then adds the switch as not allowed, every close is refused and the state says `switching_enabled` false |
 
 ## 🚀 Quick start
 

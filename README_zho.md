@@ -181,6 +181,7 @@ ARMOR-NODE-ELECTRICAL 通过电表测量住宅的交流和直流网络，并保�
 | `analog_stream.continuous` | off | 以转换器自行填充的数据流（DMA）读取模拟输入，并按过零点找到的整数个市电周期计算交流输入的有效值；重启后生效 |
 | `analog_stream.sample_rate_hz`, `window_ms`, `min_cycles`, `hysteresis_mv`, `min_hz`, `max_hz` | 20000, 400, 5, 30, 40, 70 | 数据流的采样率（2000–80000）、读取一个输入的最长窗口、按周期测量所需的完整周期数（2–50）、算作一个周期的摆幅（毫伏）以及可能是市电的频率 |
 | `analogs[].cal_gain`, `cal_offset_mv` | 1 (0.5-2), 0 (+-500) | 对照万用表等基准测得的输入校准：校正值 = (读数 mV - 偏移) x 增益；1 和 0 表示保持芯片给出的读数（交流输入只有增益） |
+| `ARMOR_SWITCH_REQUIRE_KEY` | off | 切换镜像的构建选项：没有 `command_key` 的节点会把开关添加为不允许，所有合闸都被拒绝，状态中 `switching_enabled` 为 false |
 
 ## 🚀 快速开始
 
