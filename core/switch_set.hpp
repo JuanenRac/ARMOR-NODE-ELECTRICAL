@@ -171,6 +171,9 @@ class SwitchSet {
   void set_command_key(std::string key) { command_key_ = std::move(key); nonces_.clear(); }
   /// Why the last command was dropped, or kOk when it was not.
   command_sig::Verdict last_verdict() const { return last_verdict_; }
+  /// Whether the SWITCHING image may switch at all: always, except when it was built to require a command key (CONFIG_ARMOR_SWITCH_REQUIRE_KEY) and the node has none.
+  static bool switching_allowed(bool require_key, const std::string& command_key) { return !require_key || !command_key.empty(); }
+
   /// True when at least one switch is allowed to switch: what the state message says as `switching_enabled`.
   bool switching_enabled() const { for (const Entry& e : entries_) if (e.config.transfer.allowed) return true; return false; }
 

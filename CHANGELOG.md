@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The switching image can be built to require a command key:** the build option `ARMOR_SWITCH_REQUIRE_KEY` (off by default) makes a node without a `command_key` add its transfer switch as not allowed, so every close is refused and the state says `switching_enabled` false. Host test only; nothing has run on a board.
+
 - **The result of a switch command carries the real time when the node has it:** `timestamp_ms` of the result is the time since 1970 once the clock is set, and the time since boot only while it is not (before, it was always the time since boot, so a server comparing it with its own clock saw it years in the past). Tests for both cases.
 
 - **The copy of the running firmware to the other slot waits for an install or a manual write that is on:** `start_copy()` takes the same lock as `install()` and the manual writes (not only the flag of its own job) and gives it back when it ends, so two writers can no longer open the same slot.
