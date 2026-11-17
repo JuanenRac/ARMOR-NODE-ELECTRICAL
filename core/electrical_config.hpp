@@ -297,7 +297,7 @@ inline std::string to_json(const Settings& s, bool secrets) {
   w.end_array();
   w.key("analog_stream").begin_object().field("continuous", s.analog_stream.continuous).field("sample_rate_hz", s.analog_stream.sample_rate_hz).field("window_ms", s.analog_stream.window_ms)
       .field("min_cycles", s.analog_stream.min_cycles).field("hysteresis_mv", s.analog_stream.hysteresis_mv).field("min_hz", s.analog_stream.min_hz).field("max_hz", s.analog_stream.max_hz).end_object();
-  node_write_tail(w, s);
+  node_write_tail(w, s, secrets);
   w.end_object();
   return w.str();
 }
