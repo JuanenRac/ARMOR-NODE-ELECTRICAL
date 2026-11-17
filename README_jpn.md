@@ -212,6 +212,12 @@ Python の検査：8 言語のパネル文言、タスク、保存パス、ロ�
 
 検査の大半は開閉ルールの網羅的な総当たりです（`test_switch_set` と `test_interlock`：375 039）。メーターと接触器は代役です。`test_clock` は `ok` だけを出力します。
 
+### 運用とツール
+
+* **シミュレーションベンチ：** ワークフロー `simulation.yml` が、ファームウェアのコアファイルから `tests/sim_bench.cpp` をビルドし、ARMOR-SIMULATOR がわざと劣化させた電力量計の Modbus 応答を流し込みます（`python -m armor_simulator.node_bench --bus pzem`）。ボードも ESP-IDF も使いません。
+* **故障マトリクス：** 実行はバスごと・故障ごとのマトリクスをサマリーに書き、`bench-report.json` と `bench-matrix.txt` をアーティファクト `bench-matrix` として 14 日間保存します。緑の実行は、コードが模擬バスに耐えることを示すだけで、実機については何も示しません。
+* **切替イメージ：** `ARMOR_SWITCHING=1 bash tools/build_node.sh generic <ボード>` が `CONFIG_ARMOR_SWITCHING=y` の汎用イメージ（`*-switching.bin`）をビルドします。既定では無効で、公開されません。`SwitchSet` が接触器を駆動するのはこのイメージだけです（`transfer` スイッチ 1 つ、`armor/electrical/<ノード>/command` の署名付きコマンド、応答は `.../result`）。手動ワークフロー `switching-build.yml` が両方のボード向けにビルドします。ボード上では何も動いていません。
+
 ## 🏗️ ビルドとリリース
 
 `tools/build_node.sh` が ESP-IDF 5.5.5 コンテナでイメージをビルドし、リリースにはイメージ、その SHA-256 と Ed25519 署名が基板ごとに付きます。イメージは初回のみ USB-C で書き込み、その後はパネルから更新します。
