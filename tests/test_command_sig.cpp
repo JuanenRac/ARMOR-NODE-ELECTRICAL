@@ -110,6 +110,22 @@ static void test_the_switch_set_takes_only_signed_commands_once_it_has_a_key() {
 }
 
 // Whether the settings are refused because of the command key (a node with no meter is refused for other reasons).
+static void test_a_build_that_requires_a_key_does_not_switch_without_one() {
+  const auto random = [](std::uint8_t* out, std::size_t n) { for (std::size_t i = 0; i < n; ++i) out[i] = static_cast<std::uint8_t>(i * 7 + 1); return true; };
+  CHECK(electrical::SwitchSet::switching_allowed(false, ""));        // the default build: as it always was
+  CHECK(electrical::SwitchSet::switching_allowed(false, kKey));
+  CHECK(!electrical::SwitchSet::switching_allowed(true, ""));
+  CHECK(electrical::SwitchSet::switching_allowed(true, kKey));
+  for (const bool has_key : {false, true}) {
+    electrical::SwitchSet set("electrical-1", random);
+    electrical::SwitchConfig config;
+    config.id = "transfer";
+    config.transfer.allowed = electrical::SwitchSet::switching_allowed(true, has_key ? kKey : "");
+    CHECK(set.add(config));
+    CHECK(set.switching_enabled() == has_key);
+  }
+}
+
 static bool key_refused(const config::Settings& s) {
   for (const config::Problem& problem : config::validate(s)) if (problem.path == "command_key") return true;
   return false;
@@ -156,6 +172,7 @@ int main() {
   test_the_switch_set_takes_only_signed_commands_once_it_has_a_key();
   test_the_result_carries_the_real_time_when_the_node_has_it();
   test_the_key_is_a_secret_of_the_settings();
+  test_a_build_that_requires_a_key_does_not_switch_without_one();
   std::printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
 }

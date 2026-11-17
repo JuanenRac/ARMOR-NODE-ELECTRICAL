@@ -115,7 +115,12 @@ void start(const std::string& node_id, const std::string& command_key, Publish p
   electrical::SwitchConfig config;
   config.id = kSwitchId;
   config.label = "Transfer";
+#ifdef CONFIG_ARMOR_SWITCH_REQUIRE_KEY
+  config.transfer.allowed = electrical::SwitchSet::switching_allowed(true, command_key);
+  if (!config.transfer.allowed) ESP_LOGW(kTag, "no command key: this image was built to require one, so it does not switch");
+#else
   config.transfer.allowed = true;
+#endif
   config.transfer.dead_time_ms = CONFIG_ARMOR_SWITCH_DEAD_TIME_MS;
   config.transfer.confirm_timeout_ms = CONFIG_ARMOR_SWITCH_CONFIRM_TIMEOUT_MS;
   config.transfer.arm_window_ms = CONFIG_ARMOR_SWITCH_ARM_WINDOW_MS;

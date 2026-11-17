@@ -101,6 +101,14 @@ config ARMOR_SWITCHING
         token), never both sources at once, a dead time between them, and any fault opens everything and stays latched. Opening needs no token. The server also has to be switched on
         for switching (ARMOR_ELECTRICAL_SWITCHING=1). Not a protection relay and not a certified safety function; the contactors and the wiring are the installer's. Nothing here has run on a board.
 
+config ARMOR_SWITCH_REQUIRE_KEY
+    bool "The SWITCHING image does not switch unless the node has a command key"
+    depends on ARMOR_SWITCHING
+    default n
+    help
+        OFF by default (the image behaves as before). On: when the node has no command_key the transfer switch is added as not allowed, every close is refused and the state says
+        switching_enabled false; a node with a key takes only the commands the server signed. Meant for the image that moves contactors.
+
 config ARMOR_SWITCH_COIL_A_GPIO
     int "GPIO of the coil of source A"
     depends on ARMOR_SWITCHING
