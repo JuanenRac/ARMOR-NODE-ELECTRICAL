@@ -212,6 +212,12 @@ Python 检查：八种语言的面板文字、任务、保存路径、受锁保�
 
 大部分检查是对开关规则的穷举遍历（`test_switch_set` 和 `test_interlock`：375 039）；电表和接触器是替身。`test_clock` 只输出 `ok`。
 
+### 运维与工具
+
+* **仿真台架：** 工作流 `simulation.yml` 用固件核心文件构建 `tests/sim_bench.cpp`，并向其输入由 ARMOR-SIMULATOR 故意破坏的电能表的 Modbus 应答（`python -m armor_simulator.node_bench --bus pzem`）；不涉及任何开发板，也不使用 ESP-IDF。
+* **故障矩阵：** 运行会把“总线 × 故障”矩阵写入摘要，并将 `bench-report.json` 和 `bench-matrix.txt` 作为工件 `bench-matrix` 保留 14 天。绿色的运行只说明代码能应对模拟总线，并不说明真实设备的情况。
+* **切换镜像：** `ARMOR_SWITCHING=1 bash tools/build_node.sh generic <开发板>` 会构建带 `CONFIG_ARMOR_SWITCHING=y` 的通用镜像（`*-switching.bin`），默认关闭且从不发布；只有它里面的 `SwitchSet` 才会驱动接触器（一个 `transfer` 开关，签名命令位于 `armor/electrical/<节点>/command`，应答位于 `.../result`）。手动工作流 `switching-build.yml` 为两种开发板编译它。尚未在开发板上运行过。
+
 ## 🏗️ 构建与发布
 
 `tools/build_node.sh` 在 ESP-IDF 5.5.5 容器中构建镜像，发布版带有镜像、其 SHA-256 和 Ed25519 签名，每块电路板一份；镜像第一次通过 USB-C 写入，之后从面板更新。

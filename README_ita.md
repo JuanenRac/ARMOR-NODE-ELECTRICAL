@@ -212,6 +212,12 @@ I test su host richiedono un qualsiasi compilatore C++17 (Linux, WSL, MSYS2); il
 
 La maggior parte delle verifiche sono scansioni esaustive delle regole di manovra (`test_switch_set` e `test_interlock`: 375 039); contatori e contattori sono sostituti. `test_clock` stampa solo `ok`.
 
+### Operatività e strumenti
+
+* **Banco di simulazione:** il workflow `simulation.yml` compila `tests/sim_bench.cpp` con i file del nucleo del firmware e gli riproduce le risposte Modbus dei contatori di energia, guastata apposta da ARMOR-SIMULATOR (`python -m armor_simulator.node_bench --bus pzem`); non intervengono né una scheda né ESP-IDF.
+* **Matrice dei guasti:** l'esecuzione scrive nel riepilogo la matrice bus per guasto e conserva `bench-report.json` e `bench-matrix.txt` per 14 giorni come artefatto `bench-matrix`. Un'esecuzione verde dice che il codice regge il bus simulato; non dice nulla dell'apparecchiatura reale.
+* **Immagine di manovra:** `ARMOR_SWITCHING=1 bash tools/build_node.sh generic <scheda>` compila l'immagine generica con `CONFIG_ARMOR_SWITCHING=y`, chiamata `*-switching.bin`, spenta per impostazione predefinita e mai pubblicata; solo in essa `SwitchSet` comanda i contattori (un commutatore `transfer`, comandi firmati su `armor/electrical/<nodo>/command`, risposta su `.../result`). Il workflow manuale `switching-build.yml` la compila per entrambe le schede. Nulla ha girato su una scheda.
+
 ## 🏗️ Compilazione e rilascio
 
 `tools/build_node.sh` costruisce l'immagine nel container ESP-IDF 5.5.5 e la versione porta l'immagine, il suo SHA-256 e la sua firma Ed25519, una per scheda; l'immagine si scrive via USB-C la prima volta e poi si aggiorna dal pannello.

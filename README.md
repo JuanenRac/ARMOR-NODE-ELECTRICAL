@@ -212,6 +212,12 @@ The host tests need any C++17 compiler (Linux, WSL, MSYS2); the web panel is als
 
 Most of the checks are exhaustive sweeps of the switching rules (`test_switch_set` and `test_interlock`: 375,039); the meters and contactors are stand-ins. `test_clock` prints only `ok`.
 
+### Operation and tools
+
+* **Simulation bench:** the workflow `simulation.yml` builds `tests/sim_bench.cpp` from the core files of the firmware and plays the Modbus replies of the energy meters, spoiled on purpose by ARMOR-SIMULATOR (`python -m armor_simulator.node_bench --bus pzem`), into it; no board and no ESP-IDF are involved.
+* **Matrix of faults:** the run writes the matrix of bus by fault into its summary and keeps `bench-report.json` and `bench-matrix.txt` for 14 days as the artifact `bench-matrix`. A green run says the code copes with the simulated bus; it says nothing about the real equipment.
+* **Switching image:** `ARMOR_SWITCHING=1 bash tools/build_node.sh generic <board>` builds the generic image with `CONFIG_ARMOR_SWITCHING=y`, named `*-switching.bin`, off by default and never published; only in it does `SwitchSet` drive the contactors (one `transfer` switch, signed commands on `armor/electrical/<node>/command`, answer on `.../result`). The manual workflow `switching-build.yml` compiles it for both boards. Nothing has run on a board.
+
 ## 🏗️ Build & Release
 
 `tools/build_node.sh` builds the image in the ESP-IDF 5.5.5 container and the release carries the image, its SHA-256 and its Ed25519 signature, one per board; the image is written by USB-C the first time and updated from the panel afterwards.

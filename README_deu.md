@@ -212,6 +212,12 @@ Die Host-Tests brauchen einen beliebigen C++17-Compiler (Linux, WSL, MSYS2); das
 
 Die meisten Prüfungen sind erschöpfende Durchläufe der Schaltregeln (`test_switch_set` und `test_interlock`: 375 039); Zähler und Schütze sind Ersatz. `test_clock` gibt nur `ok` aus.
 
+### Betrieb und Werkzeuge
+
+* **Simulationsbank:** der Workflow `simulation.yml` baut `tests/sim_bench.cpp` aus den Kerndateien der Firmware und spielt ihr die Modbus-Antworten der Energiezähler vor, von ARMOR-SIMULATOR absichtlich gestört (`python -m armor_simulator.node_bench --bus pzem`); weder eine Platine noch ESP-IDF sind beteiligt.
+* **Fehlermatrix:** der Lauf schreibt die Matrix Bus mal Fehler in seine Zusammenfassung und behält `bench-report.json` und `bench-matrix.txt` 14 Tage lang als Artefakt `bench-matrix`. Ein grüner Lauf sagt, dass der Code mit dem simulierten Bus zurechtkommt; über das echte Gerät sagt er nichts.
+* **Schaltabbild:** `ARMOR_SWITCHING=1 bash tools/build_node.sh generic <Platine>` baut das generische Abbild mit `CONFIG_ARMOR_SWITCHING=y`, benannt `*-switching.bin`, standardmäßig aus und nie veröffentlicht; nur darin steuert `SwitchSet` die Schütze (ein `transfer`-Schalter, signierte Befehle auf `armor/electrical/<Knoten>/command`, Antwort auf `.../result`). Der manuelle Workflow `switching-build.yml` baut es für beide Platinen. Auf einer Platine ist nichts gelaufen.
+
 ## 🏗️ Build und Veröffentlichung
 
 `tools/build_node.sh` baut das Image im ESP-IDF-5.5.5-Container, und die Version trägt das Image, sein SHA-256 und seine Ed25519-Signatur, je eines pro Platine; das Image wird beim ersten Mal per USB-C geschrieben und danach vom Panel aktualisiert.
