@@ -181,6 +181,7 @@ Netzspannung (230 V AC) und die Gleichspannung einer Batteriebank können töten
 | `analog_stream.continuous` | off | Die Analogeingänge als Datenstrom lesen, den der Wandler selbst füllt (DMA), und den Effektivwert eines Wechselsignals über ganze Netzperioden bilden, die an ihren Nulldurchgängen erkannt werden; wirkt nach einem Neustart |
 | `analog_stream.sample_rate_hz`, `window_ms`, `min_cycles`, `hysteresis_mv`, `min_hz`, `max_hz` | 20000, 400, 5, 30, 40, 70 | Die Abtastrate des Datenstroms (2000-80000), das längste Fenster, über das ein Eingang gelesen wird, die nötigen ganzen Perioden für die Messung über Perioden (2-50), der Hub in Millivolt, der als Periode zählt, und die Frequenzen, die das Netz sein können |
 | `analogs[].cal_gain`, `cal_offset_mv` | 1 (0.5-2), 0 (+-500) | Die Kalibrierung eines Eingangs, gemessen gegen eine Referenz wie ein Multimeter: korrigiert = (Messwert in mV - Offset) x Faktor; 1 und 0 lassen den Messwert so, wie ihn der Chip liefert (ein Wechselsignal hat nur den Faktor) |
+| `ARMOR_SWITCH_REQUIRE_KEY` | off | Build-Option des Schalt-Images: Ein Knoten ohne `command_key` fügt den Schalter dann als nicht erlaubt hinzu, jedes Schließen wird abgelehnt und der Status meldet `switching_enabled` false |
 
 ## 🚀 Schnellstart
 

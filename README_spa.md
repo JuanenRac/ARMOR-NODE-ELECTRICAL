@@ -181,6 +181,7 @@ La red (230 V CA) y la corriente continua de un banco de baterías pueden matar 
 | `analog_stream.continuous` | off | Leer las entradas analógicas como un flujo que el conversor llena por sí solo (DMA) y tomar el valor eficaz de una entrada alterna sobre ciclos completos de la red hallados por sus pasos por cero; se aplica tras reiniciar |
 | `analog_stream.sample_rate_hz`, `window_ms`, `min_cycles`, `hysteresis_mv`, `min_hz`, `max_hz` | 20000, 400, 5, 30, 40, 70 | La frecuencia de muestreo del flujo (2000-80000), la ventana más larga con que se lee una entrada, los ciclos completos necesarios para medir sobre ciclos (2-50), la oscilación en milivoltios que cuenta como ciclo y las frecuencias que pueden ser la red |
 | `analogs[].cal_gain`, `cal_offset_mv` | 1 (0.5-2), 0 (+-500) | La calibración de una entrada, medida frente a una referencia como un polímetro: corregido = (lectura en mV - desfase) x ganancia; 1 y 0 dejan la lectura como la dio el chip (una entrada alterna solo tiene ganancia) |
+| `ARMOR_SWITCH_REQUIRE_KEY` | off | Opción de compilación de la imagen de conmutación: un nodo sin `command_key` añade entonces el interruptor como no permitido, se rechaza todo cierre y el estado dice `switching_enabled` falso |
 
 ## 🚀 Inicio rápido
 
