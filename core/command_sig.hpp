@@ -124,7 +124,9 @@ inline std::string signature_of(std::string_view key_hex, std::string_view body)
 
 /// Checks a command that arrived. `wall_ms` is the time of the node in milliseconds since 1970, or 0 when its clock is not valid (then the freshness is not checked and the nonces
 /// alone stop a replay). The nonce is kept only once the signature is good, so a forged command cannot fill the memory.
-inline Verdict verify(std::string_view payload, std::string_view key_hex, NonceCache& cache, std::int64_t wall_ms) {
+/// `floor_ms` (0 = none) is the largest timestamp_ms of a command already taken, kept across a restart when the setting server.persist_replay_floor is on: a command that is not newer is stale, so a
+/// signed command recorded before the restart cannot be played again once the memory of nonces is empty.
+inline Verdict verify(std::string_view payload, std::string_view key_hex, NonceCache& cache, std::int64_t wall_ms, std::int64_t floor_ms = 0) {
   if (!key_is_valid(key_hex)) return Verdict::kNoKey;
   std::string body;
   std::string_view sig;
@@ -138,8 +140,34 @@ inline Verdict verify(std::string_view payload, std::string_view key_hex, NonceC
     const std::int64_t gap = stamp < 0 ? kFreshMs + 1 : (stamp > wall_ms ? stamp - wall_ms : wall_ms - stamp);
     if (gap > kFreshMs) return Verdict::kStale;
   }
+  if (floor_ms > 0 && timestamp_of(body) <= floor_ms) return Verdict::kStale;
   cache.remember(nonce);
   return Verdict::kOk;
+}
+
+/// Checks an order of the node-control channel (armor/control/...), which the order gate reads without the nonce and the signature: on success `plain` is the order with both taken off.
+inline Verdict verify_control(std::string_view payload, std::string_view key_hex, NonceCache& cache, std::int64_t wall_ms, std::string& plain) {
+  const Verdict verdict = verify(payload, key_hex, cache, wall_ms);
+  if (verdict != Verdict::kOk) return verdict;
+  std::string body;
+  std::string_view sig;
+  std::string nonce;
+  if (!split(payload, body, sig) || !nonce_of(body, nonce)) return Verdict::kNoSignature;   // cannot happen after a good verify
+  constexpr std::size_t nonce_ending = 10 + kNonceHex + 2;   // ,"nonce":" + digits + "}
+  body.resize(body.size() - nonce_ending);
+  body.push_back('}');
+  plain = body;
+  return Verdict::kOk;
+}
+
+/// Whether an order of the node-control channel may be looked at. FAIL CLOSED: with `require_sig` on, an order without a good signature is refused, and so is every order when the node has no valid key.
+/// With it off an unsigned order passes as it always did, but one that carries a signature is still checked (a forged one is refused, not read).
+inline bool control_authorized(bool require_sig, std::string_view key_hex, std::string_view payload, NonceCache& cache, std::int64_t wall_ms, std::string& plain) {
+  std::string body;
+  std::string_view sig;
+  const bool signed_form = split(payload, body, sig);
+  if (!require_sig && !signed_form) { plain.assign(payload); return true; }
+  return verify_control(payload, key_hex, cache, wall_ms, plain) == Verdict::kOk;
 }
 
 }  // namespace armor::command_sig
