@@ -238,7 +238,7 @@ Python 检查：八种语言的面板文字、任务、保存路径、受锁保�
 </p>
 
 <details>
-<summary>目录树的文本版</summary>
+<summary>目录树的文本版本</summary>
 
 ```text
 ARMOR-NODE-ELECTRICAL/
