@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The screenshots of the README can be taken on a GitHub runner:** the manual workflow `screenshots.yml` (started by hand only, read-only token, no secrets) starts the stand-in of the node, takes the pages of the web panel with the Chromium of Playwright and keeps the pictures as an artifact; `ARMOR_SHOTS_CHANNEL=chromium` makes the script take that Chromium; `docs/SCREENSHOTS.md` says how to start it and use them.
+
 ## [0.6.0] - Signed switching orders, fixed pairing PIN, set-up access point password, slot copy locks and a fault matrix
 
 - **The Security and Updates lights of the Project status table follow the evidence ceiling:** they cannot be above what the Hardware row may show for the evidence of the manifest, and Security is never green; the rows that were higher are now orange in the eight READMEs, and `tools/status_lights.py` is the new shared copy.
