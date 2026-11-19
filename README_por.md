@@ -62,7 +62,7 @@ Cada linha é uma parte deste repositório e a luz diz até onde chega hoje. É 
 | Protocolos e dados | 🟡 | As tramas e leituras dos PZEM-004T v3 e PZEM-017 são verificadas contra as tramas documentadas e amostras gravadas; nenhum contador respondeu ainda. |
 | Interface | 🟡 | As páginas de contadores e leituras do painel web foram exercitadas num navegador contra um nó simulado, não numa placa. |
 | Hardware | 🔴 | Nenhuma placa construída nem contador ou contactor ligados: nada funcionou ainda em equipamentos reais. |
-| Segurança | 🟡 | O código de configuração, o acesso com limite de palavras-passe erradas, o PIN Bluetooth e as atualizações assinadas estão testados no anfitrião; não houve revisão independente. |
+| Segurança | 🟠 | O código de configuração, o acesso com limite de palavras-passe erradas, o PIN Bluetooth e as atualizações assinadas estão testados no anfitrião; não houve revisão independente. |
 | Atualizações | 🟠 | As verificações de hash e de assinatura Ed25519 e a lógica de retrocesso passam no anfitrião; uma atualização pelo ar nunca foi executada numa placa. |
 | Escrita nos equipamentos | 🟠 | As regras para manobrar contactores só foram testadas contra contactores simulados; nada aqui manobrou ainda nada real. |
 | Integração | 🟠 | As mensagens do nó são validadas contra os esquemas partilhados e os vetores de conformidade do ARMOR-COMMON. O seu cliente MQTT é exercitado contra um Mosquitto real nos testes; nenhuma placa os enviou ainda a um servidor. |

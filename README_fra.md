@@ -62,7 +62,7 @@ Chaque ligne est une partie de ce dépôt et le feu dit où elle en est aujourd'
 | Protocoles et données | 🟡 | Les trames et lectures des PZEM-004T v3 et PZEM-017 sont vérifiées par rapport aux trames documentées et à des échantillons enregistrés ; aucun compteur n'a encore répondu. |
 | Interface | 🟡 | Les pages des compteurs et des mesures du panneau web ont été essayées dans un navigateur contre un nœud simulé, pas sur une carte. |
 | Matériel | 🔴 | Aucune carte construite ni compteur ou contacteur connectés : rien n'a encore tourné sur de vrais équipements. |
-| Sécurité | 🟡 | Le code de configuration, la connexion avec une limite de mots de passe erronés, le PIN Bluetooth et les mises à jour signées sont testés sur l'hôte ; il n'y a pas eu de revue indépendante. |
+| Sécurité | 🟠 | Le code de configuration, la connexion avec une limite de mots de passe erronés, le PIN Bluetooth et les mises à jour signées sont testés sur l'hôte ; il n'y a pas eu de revue indépendante. |
 | Mises à jour | 🟠 | Les contrôles de hash et de signature Ed25519 et la logique de retour arrière réussissent sur l'hôte ; une mise à jour par voie hertzienne n'a jamais été exécutée sur une carte. |
 | Écriture sur les équipements | 🟠 | Les règles de manœuvre des contacteurs ne sont testées que contre des contacteurs simulés ; rien ici n'a encore commandé quoi que ce soit de réel. |
 | Intégration | 🟠 | Les messages du nœud sont validés par rapport aux schémas partagés et aux vecteurs de conformité d'ARMOR-COMMON. Son client MQTT est joué contre un vrai Mosquitto dans les tests ; aucune carte ne les a encore envoyés à un serveur. |

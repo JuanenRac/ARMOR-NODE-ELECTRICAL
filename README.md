@@ -62,7 +62,7 @@ Each line is one part of this repository and the light says how far it is today.
 | Protocols and data | 🟡 | The PZEM-004T v3 and PZEM-017 frames and readings are checked against the documented frames and recorded samples; no meter has answered yet. |
 | Interface | 🟡 | The Meters and Readings pages of the web panel are exercised in a browser against a stand-in node, not on a board. |
 | Hardware | 🔴 | No board built and no meter or contactor connected: nothing has run on real equipment yet. |
-| Security | 🟡 | The set-up code, the login with a limit on wrong passwords, the Bluetooth PIN and the signed updates are tested on the host; there has been no independent review. |
+| Security | 🟠 | The set-up code, the login with a limit on wrong passwords, the Bluetooth PIN and the signed updates are tested on the host; there has been no independent review. |
 | Updates | 🟠 | The hash and Ed25519 signature checks and the rollback logic pass on the host; an update over the air has never been run on a board. |
 | Writing to equipment | 🟠 | The rules for switching contactors are tested only against stand-in contactors; nothing here has switched anything real. |
 | Integration | 🟠 | The messages of the node are validated against the shared schemas and conformance vectors of ARMOR-COMMON. Its MQTT client is played against a real Mosquitto in the tests; no board has sent them to a server yet. |
