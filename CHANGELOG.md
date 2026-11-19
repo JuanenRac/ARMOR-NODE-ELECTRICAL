@@ -4,8 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
-- **The Security and Updates lights of the Project status table follow the evidence ceiling:** they cannot be above what the Hardware row may show for the evidence of the manifest, and Security is never green; the rows that were higher are now orange in the eight READMEs, and `tools/status_lights.py` is the new shared copy.
+## [0.6.0] - Signed switching orders, fixed pairing PIN, set-up access point password, slot copy locks and a fault matrix
 
+- **The Security and Updates lights of the Project status table follow the evidence ceiling:** they cannot be above what the Hardware row may show for the evidence of the manifest, and Security is never green; the rows that were higher are now orange in the eight READMEs, and `tools/status_lights.py` is the new shared copy.
 - **The structure generator can write a figure read from the code:** `tools/make_structure.py` resolves `{{fact:NAME|LAST}}` in the descriptions of `docs/structure.json` where the documentation tools are next to the repository, and writes LAST (the figure it had when last written) everywhere else, so a repository still builds on its own.
 - **The README no longer types the number of checks the host programs count:** the Tests row of At a glance, the Tests badge and the build sentence give the host test programs and the Python checks that `ctest` registers, read from the code; the total of checks changes with every test and was only ever a typed number.
 - **The file tree of the README is drawn from the structure source:** the text tree in the eight READMEs is generated from `docs/structure.json`, the file that also draws the picture, so the two cannot disagree.
@@ -13,25 +14,16 @@ All notable changes to this project are documented here.
 - **The repository structure picture lists `firmware_base.lock`:** the file that records the version of the shared base this copy was synced from now appears in the picture, in the eight languages.
 - **The shared tools of the manifest and the status lights gain an opt-in strict check of the evidence:** `sync_manifests.py` and `status_lights.py` take `--strict-evidence` (off by default; `ARMOR_STRICT_EVIDENCE=1` switches it on for `armor_ci_validate.py`).
 - **A refused firmware can be erased from its slot:** the setting `security.ota_invalidate_rejected` (off by default, shown in the web panel in eight languages) erases the first sector of the slot a downloaded image was written to when that image is refused after it was complete (another project, another version than the release, not newer, a bad signature, or no way to boot it) and when a copy of the running slot does not end well, so a later fault cannot start it. The slot that runs is never touched.
-
 - **The Bluetooth pairing PIN can be a fixed one:** `ble.passkey_mode` now also takes `fixed`, with the six digits in `ble.passkey_pin` (kept and sealed like the node's passwords, never shown by the panel; the mode needs the PIN). The default is as before: the PIN derived from the setup code.
-
 - **The set-up access point can have a Wi-Fi password of its own:** the new setting `ap.setup_password` (8 to 63 characters, a secret, shown in the web panel) replaces the setup code of the label as the password of the access point a node without users opens. Empty by default, so nodes already installed keep their password; with it set, the code of the label no longer opens that Wi-Fi.
-
 - **The panel shows the switches of the signed orders:** the web panel gets the key of the signed orders (`command_key`) and the switch `security.control_require_sig`, in eight languages.
-
 - **The signature code is the shared one:** `core/command_sig.hpp` and `core/hmac_sha256.hpp` come from the shared firmware base. The orders to the node itself (restart, pause, standby...) can require the signature of the server with the new setting `security.control_require_sig` (off by default; it uses `command_key`, and with no valid key every order is refused).
-
 - **The simulation bench keeps a matrix of the faults it played:** the run writes a report of which fault of the bus passed, failed or was not run, prints it as one line of a bus-by-fault matrix in the summary of the run, and keeps both files as an artifact for two weeks. The matrix says what the simulated bus covered; it says nothing about the real equipment.
-
 - **The switching image can be built to require a command key:** the build option `ARMOR_SWITCH_REQUIRE_KEY` (off by default) makes a node without a `command_key` add its transfer switch as not allowed, so every close is refused and the state says `switching_enabled` false. Host test only; nothing has run on a board.
-
 - **The result of a switch command carries the real time when the node has it:** `timestamp_ms` of the result is the time since 1970 once the clock is set, and the time since boot only while it is not (before, it was always the time since boot, so a server comparing it with its own clock saw it years in the past). Tests for both cases.
-
 - **The copy of the running firmware to the other slot waits for an install or a manual write that is on:** `start_copy()` takes the same lock as `install()` and the manual writes (not only the flag of its own job) and gives it back when it ends, so two writers can no longer open the same slot.
 - **The manual firmware upload and the change of boot slot take the same lock as an installation from GitHub and a copy of the slot:** only one of them writes or reads the slot at a time (a second one is answered `409 ota_busy`), and the buffers of the upload and of the slot check are no longer shared between the two web servers. Before, an upload could overlap another writer or an upload through the other server and end in a corrupt image. Not run on a board; the build is checked in CI.
 - **The header of the switch layer says where it is linked:** it is part of the switching image only, not of the published images, as the switching document already explains.
-
 - **The order channel of the node can check a signature before it reads anything:** `node_control::Options` has an optional `authorize` hook that sees each order that arrives on `armor/control/...` and drops it, before it can arm anything, when the node says no. A node that does not set it behaves as before.
 
 ## [0.5.9] - A switching image kept off by default, signed switch commands and board-guarded uploads
