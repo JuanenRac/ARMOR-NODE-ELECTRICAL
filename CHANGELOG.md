@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The contracts it says it was checked against are 0.8.1.5:** the information message of the node carries the version of the contracts that the reverse-dependency run of ARMOR-COMMON last checked it against.
+
 ## [0.6.0] - Signed switching orders, fixed pairing PIN, set-up access point password, slot copy locks and a fault matrix
 
 - **The Security and Updates lights of the Project status table follow the evidence ceiling:** they cannot be above what the Hardware row may show for the evidence of the manifest, and Security is never green; the rows that were higher are now orange in the eight READMEs, and `tools/status_lights.py` is the new shared copy.
