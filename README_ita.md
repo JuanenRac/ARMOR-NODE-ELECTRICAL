@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-C%2B%2B17-00599c.svg" alt="Linguaggio">
   <img src="https://img.shields.io/badge/Meters-PZEM--004T%20%2F%20017-ffb020.svg" alt="Meters">
   <img src="https://img.shields.io/badge/Checks-376%2C195-2ea44f.svg" alt="Checks">
-  <img src="https://img.shields.io/badge/Tests-30%20host%20programs-2ea44f.svg" alt="Test">
+  <img src="https://img.shields.io/badge/Tests-32%20host%20programs-2ea44f.svg" alt="Test">
   <img src="https://img.shields.io/badge/Version-0.6.0-0f6cbd.svg" alt="Versione">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturità">
 </p>
@@ -41,7 +41,7 @@
 | Maturità | Funzionale |
 | Ruolo | Nodo di campo elettrico: contatori, ingressi e manovra (famiglia: Field Nodes, padre: ARMOR-COMMON) |
 | Tecnologia | C++17, ESP-IDF 5.5.5, ESP32-S3 |
-| Test | 30 programmi host e 7 verifiche Python (`ctest`) |
+| Test | 32 programmi host e 7 verifiche Python (`ctest`) |
 | Apparecchiature | Contatori PZEM-004T v3 e PZEM-017 (fino a 16), ingressi analogici, relè; manovra spenta di default |
 | Gira su | Una scheda ESP32-S3 (Ethernet o Wi-Fi); test su host su qualsiasi computer |
 | Su hardware reale | Ancora nessuno: nessuna scheda montata né contatore o contattore collegati; nulla commuta niente |
@@ -58,7 +58,7 @@ Ogni riga è una parte di questo repository e il semaforo dice a che punto è og
 | Area | Stato | Cosa significa qui |
 |---|---|---|
 | Software | 🟢 | Il firmware compila nel contenitore ESP-IDF 5.5.5 per entrambe le schede (Wi-Fi ed Ethernet). |
-| Test | 🟢 | Superano 390.369 controlli in 30 programmi host (`ctest`), 375.039 dei quali sulle regole di manovra; i contatori e i contattori sono simulazioni. |
+| Test | 🟢 | Superano 390.369 controlli in 32 programmi host (`ctest`), 375.039 dei quali sulle regole di manovra; i contatori e i contattori sono simulazioni. |
 | Protocolli e dati | 🟡 | I frame e le letture dei PZEM-004T v3 e PZEM-017 sono verificati contro i frame documentati e campioni registrati; nessun contatore ha ancora risposto. |
 | Interfaccia | 🟡 | Le pagine dei contatori e delle letture del pannello web sono state provate in un browser contro un nodo simulato, non su una scheda. |
 | Hardware | 🔴 | Nessuna scheda costruita e nessun contatore o contattore collegati: nulla ha ancora funzionato su apparecchiature reali. |
@@ -204,7 +204,7 @@ cmake -S tests -B build/host && cmake --build build/host && ctest --test-dir bui
 python -I tools/armor_ci_validate.py
 ```
 
-30 programmi di test su host e 7 verifiche Python girano con `ctest`, compilati con `-Werror`.
+32 programmi di test su host e 7 verifiche Python girano con `ctest`, compilati con `-Werror`.
 
 Verifiche Python: i testi del pannello in otto lingue, i task, i percorsi di salvataggio, la sessione Bluetooth sotto il suo lock e i percorsi chiamati dal pannello (e, in alcuni nodi, i codici HTTP o i glifi dei caratteri)
 
