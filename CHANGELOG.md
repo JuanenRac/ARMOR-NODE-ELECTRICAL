@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared CI workflow pins the current setup-java action:** the line follows the template of the shared repository.
+
 - **The contracts it says it was checked against are 0.8.1.6:** the version that the node reports as the one of the contracts follows the pin of the shared repository after its latest green run of the reverse dependencies.
 
 - **The screenshots of the README can be taken on a GitHub runner:** the manual workflow `screenshots.yml` (started by hand only, read-only token, no secrets) starts the stand-in of the node, takes the pages of the web panel with the Chromium of Playwright and keeps the pictures as an artifact; `ARMOR_SHOTS_CHANNEL=chromium` makes the script take that Chromium; `docs/SCREENSHOTS.md` says how to start it and use them.
