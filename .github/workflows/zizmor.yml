@@ -34,6 +34,6 @@ jobs:
     name: zizmor
     permissions:
       contents: read
-    uses: JuanenRac/JuanenRac/.github/workflows/zizmor.yml@4609932f4333e76a4e08d513abc62e37cafafc65 # main
+    uses: JuanenRac/JuanenRac/.github/workflows/zizmor.yml@4aad26384161af9f29c737f5a5613775278d65d7 # main
     with:
       min-severity: high
