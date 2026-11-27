@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A web request that does not end is said:** when the panel's server has been on the same request for 20 seconds, one error line names it, with the internal memory at that moment, and the health report takes it to the server although the panel does not answer. A request that took 5 seconds or more is a warning in the log. The firmware upload and the core dump download are left out. Tested on a computer; not tried on a board.
+- **No answer of the panel is sent while the sessions are locked** (a refused sign-in, a changed password): a slow browser could hold up the requests of everybody who was signed in. Tested on a computer; not tried on a board.
 - **A meter line that is heard but never gives a whole reply is shown as garbled, not silent:** bytes that arrive and stay short of an answer (a wrong speed, a line held low, noise) now count as a bad reply, so the panel points at the speed and the wiring of the line instead of saying that nothing came. Host tests; nothing run on a board.
 
 ## [0.6.2] - A working update check and more internal memory
