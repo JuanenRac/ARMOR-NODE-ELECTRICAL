@@ -187,6 +187,20 @@ static void test_bus_edges() {
   noisy.insert(noisy.end(), good.begin(), good.end());
   bus.on_rx(noisy.data(), noisy.size(), now + 40);
   CHECK(bus.meters()[0].replies_ok == 3);
+  // bytes that never make a whole reply (a wrong speed, a line held low) are a garbled line, not a silent meter
+  now = 10000;
+  CHECK(!bus.next_tx(now).empty());
+  const std::vector<std::uint8_t> zeros(7, 0x00);
+  bus.on_rx(zeros.data(), zeros.size(), now + 20);
+  const std::uint32_t silent_before = bus.meters()[0].timeouts, bad_before = bus.meters()[0].replies_bad;
+  bus.next_tx(now + 400);
+  CHECK(bus.meters()[0].last_result == pzem::Result::kLength && bus.meters()[0].replies_bad == bad_before + 1 && bus.meters()[0].timeouts == silent_before);
+  // only the echo of our own request is still silence
+  now = 12000;
+  sent = bus.next_tx(now);
+  bus.on_rx(sent.data(), sent.size(), now + 5);
+  bus.next_tx(now + 400);
+  CHECK(bus.meters()[0].last_result == pzem::Result::kTooShort && bus.meters()[0].timeouts == silent_before + 1);
   // a meter with an address no meter can have is skipped without waiting for it
   std::vector<MeterConfig> broken(2);
   broken[0].channel = "bad"; broken[0].address = 0;

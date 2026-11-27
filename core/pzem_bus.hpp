@@ -141,8 +141,10 @@ class PzemBus {
       advance(now_ms);
       return;
     }
-    ++meter.timeouts; ++meter.misses_in_a_row;
-    meter.last_result = pzem::Result::kTooShort;
+    // Nothing at all and a reply that never became whole are two different faults: the second is a line that is heard (speed, level, polarity or noise), not a silent meter.
+    if (buffer_.empty()) { ++meter.timeouts; meter.last_result = pzem::Result::kTooShort; }
+    else { ++meter.replies_bad; meter.last_result = pzem::Result::kLength; }
+    ++meter.misses_in_a_row;
     advance(now_ms);
   }
   // On to the next meter; after the last one, wait for the rest of the cycle.
