@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A meter line that is heard but never gives a whole reply is shown as garbled, not silent:** bytes that arrive and stay short of an answer (a wrong speed, a line held low, noise) now count as a bad reply, so the panel points at the speed and the wiring of the line instead of saying that nothing came. Host tests; nothing run on a board.
+
 ## [0.6.2] - A working update check and more internal memory
 
 - **The look for a new version no longer answers "the request is too large":** GitHub's answer about a release grows with its files and its notes and passed the 24 kB the node kept. It is now read piece by piece as it arrives and only the tag and the names and addresses of the files are kept, so its length no longer matters (up to 512 kB). Tested on a computer with a real answer; not tried on a board.
